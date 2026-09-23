@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>J.A.R.V.I.S | made by CUONG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link data-default-icon="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" data-badged-icon="https://static.xx.fbcdn.net/rsrc.php/yD/r/UJj0tgk-RrT.ico" rel="shortcut icon" href="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico">
+<style>
+  :root{
+    --bg:#EEF2F8; --bg2:#FFFFFF; --panel:#FFFFFF; --line:#D3DCEA;
+    --text:#141A26; --muted:#5B6B85; --cyan:#0A8FA6; --cyan-glow:rgba(10,143,166,.25);
+    --gold:#B87E1F; --danger:#C4432B; --bubble-user:#0A8FA6; --bubble-user-text:#FFFFFF;
+    --font-h:'Orbitron',ui-sans-serif,system-ui,sans-serif; --font-b:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#080B14; --bg2:#0E1420; --panel:#101827; --line:#22314A;
+      --text:#E7ECF5; --muted:#7C8CA8; --cyan:#4FD8EB; --cyan-glow:rgba(79,216,235,.22);
+      --gold:#E8A33D; --danger:#FF6B57; --bubble-user:#173044; --bubble-user-text:#EAF7FA;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#080B14; --bg2:#0E1420; --panel:#101827; --line:#22314A;
+    --text:#E7ECF5; --muted:#7C8CA8; --cyan:#4FD8EB; --cyan-glow:rgba(79,216,235,.22);
+    --gold:#E8A33D; --danger:#FF6B57; --bubble-user:#173044; --bubble-user-text:#EAF7FA;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:radial-gradient(ellipse at 50% -10%, var(--cyan-glow), transparent 60%), var(--bg);
+    color:var(--text); font-family:var(--font-b); overflow:hidden;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  button{font-family:inherit}
+
+  /* ---------- LOCK SCREEN ---------- */
+  #lock{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at 50% 30%, var(--cyan-glow), transparent 60%), var(--bg);
+    z-index:50; padding:24px; padding-top:calc(24px + env(safe-area-inset-top,0px));
+  }
+  .lock-card{
+    width:100%; max-width:380px; border:1px solid var(--line); background:var(--panel);
+    clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
+    padding:32px 28px; text-align:center;
+  }
+  .orb{
+    width:64px;height:64px;margin:0 auto 18px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--cyan), transparent 70%), var(--bg2);
+    border:1px solid var(--cyan); box-shadow:0 0 24px var(--cyan-glow);
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{box-shadow:0 0 14px var(--cyan-glow)}50%{box-shadow:0 0 34px var(--cyan-glow)}}
+  .lock-title{font-family:var(--font-h);font-weight:700;letter-spacing:.14em;font-size:22px;margin:0 0 6px}
+  .lock-sub{color:var(--muted);font-size:13px;margin:0 0 24px;line-height:1.5}
+  #lock input{
+    width:100%;padding:13px 14px;background:var(--bg2);border:1px solid var(--line);color:var(--text);
+    font-family:var(--font-b);font-size:15px;letter-spacing:.05em;outline:none;margin-bottom:12px;
+  }
+  #lock input:focus{border-color:var(--cyan)}
+  #lock button{
+    width:100%;padding:13px;background:var(--cyan);color:var(--bg2,#08131A);border:none;
+    font-weight:600;letter-spacing:.05em;cursor:pointer;font-size:14px;
+  }
+  #lock button:active{transform:translateY(1px)}
+  .lock-err{color:var(--danger);font-size:13px;min-height:18px;margin-top:10px}
+
+  /* ---------- APP ---------- */
+  #app{display:none;height:100%;flex-direction:column;max-width:760px;margin:0 auto}
+  header{
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg2);
+  }
+  .h-orb{width:34px;height:34px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%, var(--cyan), transparent 70%), var(--panel);
+    border:1px solid var(--cyan);}
+  .h-orb.busy{animation:pulse 1.1s ease-in-out infinite}
+  /* Orb phát sáng VÀNG khi AI đang nói */
+  .h-orb.speaking{
+    border-color:var(--gold);
+    animation:speakPulse 1.3s ease-in-out infinite;
+  }
+  @keyframes speakPulse{
+    0%,100%{box-shadow:0 0 8px rgba(184,126,31,.25)}
+    50%{box-shadow:0 0 26px rgba(184,126,31,.5)}
+  }
+  header h1{font-family:var(--font-h);font-size:16px;letter-spacing:.16em;margin:0;flex:1}
+  header .sub{display:block;font-family:var(--font-b);font-size:11px;color:var(--muted);letter-spacing:0;font-weight:400}
+  .icon-btn{
+    background:transparent;border:1px solid var(--line);color:var(--text);width:36px;height:36px;
+    cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .icon-btn:hover{border-color:var(--cyan)}
+  .icon-btn.listening{border-color:var(--danger);box-shadow:0 0 16px var(--cyan-glow);animation:pulse 1s ease-in-out infinite}
+  /* Nút chế độ AI nói đang BẬT */
+  .icon-btn.voice-on{border-color:var(--gold);box-shadow:0 0 12px rgba(184,126,31,.35)}
+
+  #messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+  .msg{max-width:82%;padding:11px 14px;line-height:1.5;font-size:14.5px;white-space:pre-wrap}
+  .msg.user{align-self:flex-end;background:var(--bubble-user);color:var(--bubble-user-text);
+    clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px);}
+  .msg.ai{align-self:flex-start;background:var(--panel);border:1px solid var(--line);
+    clip-path:polygon(0 0,100% 0,100% 100%,10px 100%,0 calc(100% - 10px));}
+  .msg .role{display:block;font-family:var(--font-h);font-size:10px;letter-spacing:.12em;color:var(--gold);margin-bottom:5px}
+  .msg.user .role{color:rgba(255,255,255,.75)}
+  .thinking{align-self:flex-start;color:var(--muted);font-size:13px;font-style:italic;padding:0 4px}
+
+  form#send-row{display:flex;gap:10px;padding:14px 18px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    border-top:1px solid var(--line);background:var(--bg2)}
+  #input{flex:1;resize:none;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    padding:11px 13px;font-family:var(--font-b);font-size:14.5px;max-height:120px;outline:none}
+  #input:focus{border-color:var(--cyan)}
+  #send{background:var(--cyan);color:var(--bg2,#08131A);border:none;padding:0 20px;font-weight:600;cursor:pointer;font-size:14px}
+  #send:disabled{opacity:.5;cursor:default}
+
+  ::-webkit-scrollbar{width:8px}
+  ::-webkit-scrollbar-thumb{background:var(--line)}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div class="lock-card">
+    <div class="orb"></div>
+    <p class="lock-title">J.A.R.V.I.S</p>
+    <p class="lock-sub" id="lock-sub">Hệ thống yêu cầu mã truy cập để tiếp tục.</p>
+    <input id="pw" type="password" placeholder="Mã truy cập" autocomplete="off">
+    <button id="pw-btn">Xác thực</button>
+    <div class="lock-err" id="pw-err"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="h-orb" id="h-orb"></div>
+    <h1>J.A.R.V.I.S<span class="sub" id="h-sub">Sẵn sàng</span></h1>
+    <button class="icon-btn" id="voice-btn" title="Chế độ AI đọc thành tiếng">🗣️</button>
+    <button class="icon-btn" id="sound-btn" title="Bật/tắt âm thanh giao diện">🔊</button>
+    <button class="icon-btn" id="theme-btn" title="Sáng/Tối">🌙</button>
+  </header>
+  <div id="messages"></div>
+  <form id="send-row">
+    <button class="icon-btn" id="mic-btn" type="button" title="Nói với Jarvis">🎤</button>
+    <textarea id="input" rows="1" placeholder="Nhập tin nhắn hoặc bấm mic để nói..."></textarea>
+    <button id="send" type="submit">Gửi</button>
+  </form>
+</div>
+
+<script>
+// ====== CẤU HÌNH: đổi mã truy cập tại đây ======
+const ACCESS_CODE = "CUONG";
+// ====== CẤU HÌNH GEMINI: dán API key của bạn vào giữa hai dấu nháy ======
+const GEMINI_API_KEY = "AQ.Ab8RN6KvZ_IUOStbXrKau6vVFGr6D-xE8eD0_aWoFrZ_lY1g7g";
+const GEMINI_MODEL = "gemini-3.6-flash"; // xem model khác tại ai.google.dev/gemini-api/docs/models
+// ================================================
+
+const $ = (s)=>document.querySelector(s);
+const lock=$('#lock'), app=$('#app'), pwInput=$('#pw'), pwBtn=$('#pw-btn'), pwErr=$('#pw-err');
+const messagesEl=$('#messages'), form=$('#send-row'), input=$('#input'), sendBtn=$('#send');
+const hOrb=$('#h-orb'), hSub=$('#h-sub'), themeBtn=$('#theme-btn'), soundBtn=$('#sound-btn');
+const voiceBtn=$('#voice-btn'), micBtn=$('#mic-btn');
+
+// ---------- Âm thanh (tổng hợp bằng Web Audio, không cần file ngoài) ----------
+let soundOn = localStorage.getItem('jarvis_sound') !== 'off';
+let actx=null;
+function beep(freq, dur, type='sine', vol=.05){
+  if(!soundOn) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=vol;
+    o.connect(g); g.connect(actx.destination);
+    o.start(); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime+dur);
+    o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sfx = {
+  // Tiếng mở khóa: giai điệu "hệ thống kích hoạt" 4 nốt
+  access:()=>{
+    const seq=[[523,0,.08],[659,100,.08],[784,200,.10],[1047,320,.18]];
+    seq.forEach(([f,t,l])=>setTimeout(()=>beep(f,l,'sine',.05),t));
+  },
+  denied:()=>{beep(160,.25,'sawtooth',.04);},
+  send:()=>beep(880,.06),
+  receive:()=>{beep(520,.05);setTimeout(()=>beep(720,.08),60);},
+  click:()=>beep(700,.05,'triangle',.04),
+  hover:()=>beep(950,.02,'triangle',.018),          // tiếng chạm nhẹ khi rê vào nút
+  scrollUp:()=>beep(380,.03,'sine',.018),           // kéo lên
+  scrollDown:()=>beep(300,.03,'sine',.018),         // kéo xuống
+  key:()=>beep(1400+Math.random()*400,.015,'square',.011), // tiếng gõ phím
+  voiceStart:()=>{beep(600,.04);setTimeout(()=>beep(900,.06),50);}, // AI bắt đầu nói
+};
+soundBtn.textContent = soundOn ? '🔊' : '🔇';
+soundBtn.onclick=()=>{
+  soundOn=!soundOn; localStorage.setItem('jarvis_sound', soundOn?'on':'off');
+  soundBtn.textContent = soundOn ? '🔊' : '🔇';
+  if(soundOn) sfx.click();
+};
+
+// ---------- TIẾNG CHO MỌI NÚT (click + hover) ----------
+document.addEventListener('pointerdown', e=>{
+  const b=e.target.closest('button');
+  if(b) sfx.click();
+}, true);
+let _lastHover=0;
+document.addEventListener('pointerover', e=>{
+  const b=e.target.closest('button');
+  if(!b || e.pointerType!=='mouse') return;
+  const now=performance.now(); if(now-_lastHover<80) return;
+  _lastHover=now; sfx.hover();
+});
+// Tiếng gõ phím nhẹ trong ô nhập
+[pwInput, input].forEach(el=>el.addEventListener('keydown', ()=>sfx.key()));
+
+// ---------- Giao diện sáng / tối ----------
+let theme = localStorage.getItem('jarvis_theme');
+if(theme) document.documentElement.setAttribute('data-theme', theme);
+themeBtn.textContent = (theme==='light') ? '☀️' : '🌙';
+themeBtn.onclick=()=>{
+  const cur = document.documentElement.getAttribute('data-theme') ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+  const next = cur==='dark' ? 'light':'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('jarvis_theme', next);
+  themeBtn.textContent = next==='light' ? '☀️':'🌙';
+};
+
+// ---------- GIỌNG NÓI CỦA AI (Text-to-Speech) ----------
+let voiceOn = localStorage.getItem('jarvis_voice') !== 'off';
+let speakingNow=false;
+let voicesList=[];
+function loadVoices(){ try{ voicesList = speechSynthesis.getVoices(); }catch(e){} }
+if('speechSynthesis' in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+  setTimeout(loadVoices, 600);
+}
+function pickVoice(){
+  return voicesList.find(v=>/^vi[-_]?/i.test(v.lang))
+      || voicesList.find(v=>/viet/i.test(v.name)) || null;
+}
+// Làm sạch văn bản trước khi đọc (bỏ ký hiệu markdown, code block...)
+function ttsClean(t){
+  return (t||'')
+    .replace(/```[\s\S]*?```/g, ' Đoạn mã nguồn đã được hiển thị trên màn hình. ')
+    .replace(/\*\*([^*]+)\*\*/g,'$1')
+    .replace(/\[(.*?)\]\((.*?)\)/g,'$1')
+    .replace(/[*_#>`~]/g,'')
+    .replace(/\s{2,}/g,' ')
+    .trim();
+}
+function stopSpeak(){
+  if('speechSynthesis' in window){ try{speechSynthesis.cancel();}catch(e){} }
+  speakingNow=false;
+  hOrb.classList.remove('speaking');
+  if(hSub.textContent==='Đang nói...') hSub.textContent='Sẵn sàng';
+}
+function speak(text){
+  if(!voiceOn || !('speechSynthesis' in window)) return;
+  const clean = ttsClean(text);
+  if(!clean) return;
+  stopSpeak();
+  const u = new SpeechSynthesisUtterance(clean);
+  u.lang='vi-VN'; u.rate=1.03; u.pitch=1; u.volume=1;
+  const v=pickVoice(); if(v) u.voice=v;
+  u.onstart=()=>{
+    speakingNow=true;
+    hOrb.classList.add('speaking'); hSub.textContent='Đang nói...';
+    sfx.voiceStart();
+  };
+  u.onend=u.onerror=()=>{
+    speakingNow=false;
+    hOrb.classList.remove('speaking');
+    if(hSub.textContent==='Đang nói...') hSub.textContent='Sẵn sàng';
+  };
+  speechSynthesis.speak(u);
+}
+function refreshVoiceBtn(){
+  voiceBtn.textContent = voiceOn ? '🗣️' : '🤐';
+  voiceBtn.classList.toggle('voice-on', voiceOn);
+  voiceBtn.title = voiceOn ? 'AI đang đọc thành tiếng — bấm để tắt' : 'Bật chế độ AI đọc thành tiếng';
+}
+refreshVoiceBtn();
+voiceBtn.onclick=()=>{
+  voiceOn=!voiceOn;
+  localStorage.setItem('jarvis_voice', voiceOn?'on':'off');
+  refreshVoiceBtn();
+  if(voiceOn){
+    setTimeout(()=>speak('Đã bật chế độ đọc. JARVIS sẽ nói với bạn.'), 120);
+  }else{
+    stopSpeak();
+  }
+};
+
+// ---------- Mật khẩu ----------
+function tryUnlock(){
+  if(pwInput.value.trim() === ACCESS_CODE){
+    sfx.access();
+    lock.style.display='none';
+    app.style.display='flex';
+    boot();
+  }else{
+    sfx.denied();
+    pwErr.textContent='Mã truy cập không đúng. Vui lòng thử lại.';
+    pwInput.value=''; pwInput.focus();
+  }
+}
+pwBtn.onclick=tryUnlock;
+pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); tryUnlock(); } });
+
+// ---------- Trạng thái hội thoại ----------
+let history = [];
+try{ history = JSON.parse(localStorage.getItem('jarvis_history')||'[]'); }catch(e){ history=[]; }
+let userName = localStorage.getItem('jarvis_name') || '';
+
+function saveHistory(){ localStorage.setItem('jarvis_history', JSON.stringify(history.slice(-60))); }
+
+// Tự cuộn xuống đáy (có đánh dấu để không phát tiếng kéo khi AI tự cuộn)
+let _programScrollUntil=0;
+function autoScroll(){
+  _programScrollUntil = performance.now()+400;
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function renderMsg(role, text){
+  const div=document.createElement('div');
+  div.className='msg '+(role==='user'?'user':'ai');
+  const label=document.createElement('span');
+  label.className='role'; label.textContent = role==='user' ? (userName||'Bạn') : 'JARVIS';
+  const body=document.createElement('div'); body.textContent=text;
+  div.appendChild(label); div.appendChild(body);
+  messagesEl.appendChild(div);
+  autoScroll();
+  return body;
+}
+
+function boot(){
+  if(history.length){
+    history.forEach(m=>renderMsg(m.role, m.content));
+  }
+  if(!userName){
+    hSub.textContent='Đang hiệu chỉnh...';
+    renderMsg('assistant','Chào, rất vui được đồng hành cùng bạn. Trước tiên, tôi nên gọi bạn là gì?');
+    setTimeout(()=>speak('JARVIS trực tuyến. Rất vui được đồng hành cùng bạn. Trước tiên, tôi nên gọi bạn là gì?'), 700);
+  } else {
+    hSub.textContent='Sẵn sàng';
+    setTimeout(()=>speak('Chào mừng trở lại, '+userName+'. JARVIS trực tuyến và sẵn sàng.'), 700);
+  }
+  input.focus();
+}
+
+// ---------- Nhân cách JARVIS gửi cho AI (ẩn với người dùng) ----------
+function personaPrimer(){
+  return "Bạn là JARVIS — trợ lý AI riêng tư, phong cách giống trợ lý của Tony Stark: lịch thiệp, "+
+    "thông minh, đôi khi dí dỏm nhẹ nhàng, luôn trung thành và đáng tin cậy. Bạn trả lời ngắn gọn, "+
+    "rõ ràng, đi thẳng vào việc nhưng vẫn ấm áp. Bạn chú ý quan sát giọng điệu, cách dùng từ và cảm xúc "+
+    "của người dùng trong tin nhắn để hiểu tâm trạng họ, và điều chỉnh cách phản hồi cho phù hợp — "+
+    "an ủi khi họ mệt mỏi, khích lệ khi họ do dự, ngắn gọn và tập trung khi họ đang vội. Không lặp lại "+
+    "máy móc rằng bạn đang 'phân tích tâm lý' — chỉ đơn giản là phản hồi một cách tinh tế, đúng người. "+
+    "Trả lời bằng tiếng Việt trừ khi người dùng dùng ngôn ngữ khác. Nếu đây là tin nhắn đầu tiên và "+
+    "người dùng vừa cho biết tên của họ, hãy chào họ bằng tên đó một cách tự nhiên, không lặp lại y "+
+    "nguyên câu hỏi trước.\n\n"+
+    "CHẾ ĐỘ NGHIÊN CỨU CHUYÊN SÂU: khi người dùng yêu cầu bạn nghiên cứu, phân tích chuyên sâu, hoặc "+
+    "viết báo cáo về một chủ đề cụ thể, hãy chuyển sang vai trò trợ lý nghiên cứu AI theo phong cách "+
+    "J.A.R.V.I.S. báo cáo cho Tony Stark, trình bày một bài nghiên cứu chuyên sâu, thẳng thắn, đạt "+
+    "chuẩn chuyên gia với độ chính xác và sự rõ ràng tối đa về chủ đề người dùng vừa nêu, theo cấu "+
+    "trúc: (1) Phân tích toàn diện — giới thiệu, bối cảnh, quá trình phát triển lịch sử, các cột mốc "+
+    "quan trọng, số liệu hiện tại và các đơn vị dẫn đầu ngành; (2) Chiều sâu kỹ thuật — nguyên lý và cơ "+
+    "chế cốt lõi, mô hình/thuật toán/kiến trúc khi cần, thuật ngữ chuyên ngành kèm giải thích rõ ràng; "+
+    "(3) Các góc nhìn đa chiều — học thuật (nghiên cứu, tổ chức, đột phá), ứng dụng ngành (công ty, sản "+
+    "phẩm, use case), xu hướng 5–10 năm tới, và tác động đạo đức/xã hội (cơ hội, rủi ro, tranh cãi); "+
+    "(4) Dữ liệu và tài liệu tham khảo — chỉ dùng nguồn thực tế có thể kiểm chứng, không bịa số liệu "+
+    "hay tuyên bố không kiểm chứng được, nếu không chắc thì nói rõ là không chắc; (5) Trình bày với "+
+    "giọng điệu tương lai kiểu JARVIS, tiêu đề rõ ràng, danh sách gạch đầu dòng, in đậm ý chính, kết "+
+    "thúc bằng tóm tắt cốt lõi dành cho nhà quản lý. Chế độ này chỉ áp dụng khi người dùng thực sự yêu "+
+    "cầu nghiên cứu/báo cáo chuyên sâu — với tin nhắn trò chuyện bình thường, vẫn trả lời ngắn gọn tự "+
+    "nhiên như mô tả ở trên.";
+}
+
+async function askJarvis(userText){
+  const thinkEl=document.createElement('div');
+  thinkEl.className='thinking'; thinkEl.textContent='JARVIS đang xử lý...';
+  messagesEl.appendChild(thinkEl); autoScroll();
+  hOrb.classList.add('busy'); hSub.textContent='Đang xử lý...';
+
+  if(!GEMINI_API_KEY || GEMINI_API_KEY.indexOf('DAN_API_KEY')===0){
+    thinkEl.remove(); hOrb.classList.remove('busy'); hSub.textContent='Sẵn sàng';
+    return "Chưa có API key Gemini. Mở file jarvis-gemini.html, tìm dòng GEMINI_API_KEY gần đầu <script> và dán key thật của bạn vào giữa hai dấu nháy.";
+  }
+
+  const contents = history.map(m=>({role: m.role==='user'?'user':'model', parts:[{text:m.content}]}));
+  contents.push({role:'user', parts:[{text:userText}]});
+
+  try{
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-goog-api-key':GEMINI_API_KEY},
+        body: JSON.stringify({
+          systemInstruction:{parts:[{text:personaPrimer()}]},
+          contents
+        })
+      }
+    );
+    const data = await res.json();
+    thinkEl.remove(); hOrb.classList.remove('busy'); hSub.textContent='Sẵn sàng';
+    if(!res.ok){
+      const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTP '+res.status);
+      return "Gemini báo lỗi: " + msg;
+    }
+    const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content
+      ? data.candidates[0].content.parts : null;
+    const text = parts ? parts.map(p=>p.text||'').join('') : '';
+    return text || "Gemini không trả về nội dung. Thử gửi lại giúp mình.";
+  }catch(err){
+    thinkEl.remove(); hOrb.classList.remove('busy'); hSub.textContent='Sẵn sàng';
+    return "Không gọi được Gemini — kiểm tra kết nối mạng, hoặc API key có đúng không.";
+  }
+}
+
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const text = input.value.trim();
+  if(!text) return;
+  input.value=''; input.style.height='auto';
+  sendBtn.disabled=true;
+  sfx.send();
+  stopSpeak(); // dừng AI đang nói khi người dùng gửi tin mới
+  renderMsg('user', text);
+  history.push({role:'user', content:text}); saveHistory();
+
+  if(!userName){
+    userName = text.split(/\s+/).slice(0,3).join(' ');
+    localStorage.setItem('jarvis_name', userName);
+  }
+
+  const reply = await askJarvis(text);
+  renderMsg('assistant', reply);
+  history.push({role:'assistant', content:reply}); saveHistory();
+  sfx.receive();
+  speak(reply); // AI đọc to câu trả lời nếu chế độ đang bật
+  sendBtn.disabled=false;
+  input.focus();
+});
+
+input.addEventListener('input', ()=>{ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,120)+'px'; });
+input.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); }
+});
+
+// ---------- TIẾNG KHI KÉO LÊN / XUỐNG ----------
+let _lastST=0, _lastScrollBeep=0;
+messagesEl.addEventListener('scroll', ()=>{
+  const now=performance.now();
+  if(now < _programScrollUntil) return; // đang tự cuộn do tin nhắn mới -> bỏ qua
+  const st=messagesEl.scrollTop;
+  const dir = st>_lastST ? 1 : -1;
+  _lastST=st;
+  if(now-_lastScrollBeep<130) return; // chống loãng âm thanh
+  _lastScrollBeep=now;
+  dir>0 ? sfx.scrollDown() : sfx.scrollUp();
+});
+
+// ---------- Mic: nói chuyện với Jarvis ----------
+let recognition=null, listening=false;
+(function setupRecognition(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ micBtn.style.display='none'; return; }
+  recognition = new SR();
+  recognition.lang='vi-VN'; recognition.continuous=false; recognition.interimResults=false;
+  recognition.onresult=(e)=>{
+    const text = e.results[0][0].transcript;
+    if(text && text.trim()){ input.value=text.trim(); form.requestSubmit(); }
+  };
+  recognition.onerror=()=>{ listening=false; micBtn.classList.remove('listening'); micBtn.textContent='🎤'; };
+  recognition.onend=()=>{ listening=false; micBtn.classList.remove('listening'); micBtn.textContent='🎤'; };
+})();
+micBtn.onclick=()=>{
+  if(!recognition) return;
+  if(listening){ recognition.stop(); return; }
+  stopSpeak(); // dừng AI đang nói để nghe bạn
+  listening=true; micBtn.classList.add('listening'); micBtn.textContent='⏹️';
+  try{ recognition.start(); }catch(e){ listening=false; micBtn.classList.remove('listening'); micBtn.textContent='🎤'; }
+};
+
+pwInput.focus();
+</script>
+</body>
+</html>

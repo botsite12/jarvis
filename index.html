@@ -6,165 +6,439 @@
 <title>J.A.R.V.I.S | made by CUONG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link data-default-icon="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" data-badged-icon="https://static.xx.fbcdn.net/rsrc.php/yD/r/UJj0tgk-RrT.ico" rel="shortcut icon" href="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico">
 <style>
   :root{
-    --bg:#EEF2F8; --bg2:#FFFFFF; --panel:#FFFFFF; --line:#D3DCEA;
-    --text:#141A26; --muted:#5B6B85; --cyan:#0A8FA6; --cyan-glow:rgba(10,143,166,.25);
-    --gold:#B87E1F; --danger:#C4432B; --bubble-user:#0A8FA6; --bubble-user-text:#FFFFFF;
-    --font-h:'Orbitron',ui-sans-serif,system-ui,sans-serif; --font-b:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    --bg:#EAF0F8; --bg2:#FFFFFF; --panel:#FFFFFF; --line:#D3DCEA;
+    --text:#141A26; --muted:#5B6B85;
+    --cyan:#0A8FA6; --cyan2:#12B5C9; --cyan-glow:rgba(10,143,166,.28);
+    --gold:#B87E1F; --danger:#C4432B;
+    --bubble-user:#0A8FA6; --bubble-user2:#0FB8A8; --bubble-user-text:#FFFFFF;
+    --glass:rgba(255,255,255,.66); --glass-2:rgba(255,255,255,.5);
+    --grid-line:rgba(10,143,166,.08);
+    --font-h:'Orbitron',ui-sans-serif,system-ui,sans-serif;
+    --font-b:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
     box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#080B14; --bg2:#0E1420; --panel:#101827; --line:#22314A;
-      --text:#E7ECF5; --muted:#7C8CA8; --cyan:#4FD8EB; --cyan-glow:rgba(79,216,235,.22);
-      --gold:#E8A33D; --danger:#FF6B57; --bubble-user:#173044; --bubble-user-text:#EAF7FA;
+      --bg:#060A13; --bg2:#0E1420; --panel:#101827; --line:#22314A;
+      --text:#E7ECF5; --muted:#7C8CA8;
+      --cyan:#4FD8EB; --cyan2:#38C6DD; --cyan-glow:rgba(79,216,235,.25);
+      --gold:#E8A33D; --danger:#FF6B57;
+      --bubble-user:#173044; --bubble-user2:#1C4258; --bubble-user-text:#EAF7FA;
+      --glass:rgba(16,24,39,.6); --glass-2:rgba(16,24,39,.45);
+      --grid-line:rgba(79,216,235,.06);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#080B14; --bg2:#0E1420; --panel:#101827; --line:#22314A;
-    --text:#E7ECF5; --muted:#7C8CA8; --cyan:#4FD8EB; --cyan-glow:rgba(79,216,235,.22);
-    --gold:#E8A33D; --danger:#FF6B57; --bubble-user:#173044; --bubble-user-text:#EAF7FA;
+    --bg:#060A13; --bg2:#0E1420; --panel:#101827; --line:#22314A;
+    --text:#E7ECF5; --muted:#7C8CA8;
+    --cyan:#4FD8EB; --cyan2:#38C6DD; --cyan-glow:rgba(79,216,235,.25);
+    --gold:#E8A33D; --danger:#FF6B57;
+    --bubble-user:#173044; --bubble-user2:#1C4258; --bubble-user-text:#EAF7FA;
+    --glass:rgba(16,24,39,.6); --glass-2:rgba(16,24,39,.45);
+    --grid-line:rgba(79,216,235,.06);
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
-  body{
-    background:radial-gradient(ellipse at 50% -10%, var(--cyan-glow), transparent 60%), var(--bg);
-    color:var(--text); font-family:var(--font-b); overflow:hidden;
-  }
+  body{background:var(--bg);color:var(--text);font-family:var(--font-b);overflow:hidden}
   html{scroll-padding-top:env(safe-area-inset-top,0px)}
   button{font-family:inherit}
+  ::selection{background:var(--cyan-glow)}
 
-  /* ---------- LOCK SCREEN ---------- */
+  /* ============ NỀN ĐỘNG ============ */
+  #bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .aurora{position:absolute;border-radius:50%;filter:blur(85px);opacity:.4;will-change:transform}
+  .a1{width:55vmax;height:55vmax;top:-22vmax;left:-14vmax;
+    background:radial-gradient(circle,var(--cyan) 0%,transparent 62%);
+    animation:drift1 26s ease-in-out infinite alternate}
+  .a2{width:48vmax;height:48vmax;bottom:-20vmax;right:-12vmax;
+    background:radial-gradient(circle,var(--cyan2) 0%,transparent 62%);
+    animation:drift2 31s ease-in-out infinite alternate}
+  .a3{width:30vmax;height:30vmax;top:38%;left:56%;
+    background:radial-gradient(circle,var(--gold) 0%,transparent 60%);
+    opacity:.14;animation:drift3 23s ease-in-out infinite alternate}
+  @keyframes drift1{to{transform:translate(9vmax,7vmax) scale(1.15)}}
+  @keyframes drift2{to{transform:translate(-8vmax,-6vmax) scale(1.12)}}
+  @keyframes drift3{to{transform:translate(-6vmax,5vmax) scale(.85)}}
+  .grid-overlay{position:absolute;inset:0;
+    background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 78%);
+    mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 78%)}
+  #stars{position:absolute;inset:0;width:100%;height:100%}
+
+  /* ============ LOCK / ĐĂNG NHẬP ============ */
   #lock{
     position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-    background:radial-gradient(ellipse at 50% 30%, var(--cyan-glow), transparent 60%), var(--bg);
     z-index:50; padding:24px; padding-top:calc(24px + env(safe-area-inset-top,0px));
+    overflow-y:auto;
   }
   .lock-card{
-    width:100%; max-width:380px; border:1px solid var(--line); background:var(--panel);
-    clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
-    padding:32px 28px; text-align:center;
+    position:relative; width:100%; max-width:390px; text-align:center;
+    background:var(--glass); backdrop-filter:blur(22px) saturate(1.5); -webkit-backdrop-filter:blur(22px) saturate(1.5);
+    border:1px solid var(--line); border-radius:22px;
+    padding:32px 30px 26px; overflow:hidden;
+    box-shadow:0 24px 70px rgba(0,0,0,.35), 0 0 0 1px var(--cyan-glow), inset 0 1px 0 var(--glass-2);
+    animation:cardIn .6s cubic-bezier(.21,1.02,.73,1) both;
   }
+  @keyframes cardIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
+  .lock-card::before,.lock-card::after,
+  .lock-brackets i::before,.lock-brackets i::after{
+    content:'';position:absolute;width:24px;height:24px;border:2px solid var(--cyan);
+    filter:drop-shadow(0 0 6px var(--cyan-glow))}
+  .lock-card::before{top:10px;left:10px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+  .lock-card::after{top:10px;right:10px;border-left:none;border-bottom:none;border-radius:0 6px 0 0}
+  .lock-brackets i::before{bottom:10px;left:10px;border-right:none;border-top:none;border-radius:0 0 0 6px}
+  .lock-brackets i::after{bottom:10px;right:10px;border-left:none;border-top:none;border-radius:0 0 6px 0}
+  .scanline{position:absolute;left:0;right:0;height:90px;top:-90px;pointer-events:none;
+    background:linear-gradient(180deg,transparent,var(--cyan-glow),transparent);
+    animation:scan 4.5s ease-in-out infinite}
+  @keyframes scan{0%{top:-90px}55%,100%{top:calc(100% + 10px)}}
+
+  .orb-wrap{position:relative;width:78px;height:78px;margin:0 auto 14px}
   .orb{
-    width:64px;height:64px;margin:0 auto 18px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, var(--cyan), transparent 70%), var(--bg2);
-    border:1px solid var(--cyan); box-shadow:0 0 24px var(--cyan-glow);
-    animation:pulse 2.6s ease-in-out infinite;
+    position:absolute;inset:10px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%,var(--cyan),var(--cyan2) 45%,transparent 75%),var(--bg2);
+    border:1px solid var(--cyan);
+    box-shadow:0 0 26px var(--cyan-glow), inset 0 0 18px var(--cyan-glow);
+    animation:corePulse 2.6s ease-in-out infinite;
   }
-  @keyframes pulse{0%,100%{box-shadow:0 0 14px var(--cyan-glow)}50%{box-shadow:0 0 34px var(--cyan-glow)}}
-  .lock-title{font-family:var(--font-h);font-weight:700;letter-spacing:.14em;font-size:22px;margin:0 0 6px}
-  .lock-sub{color:var(--muted);font-size:13px;margin:0 0 24px;line-height:1.5}
-  #lock input{
-    width:100%;padding:13px 14px;background:var(--bg2);border:1px solid var(--line);color:var(--text);
-    font-family:var(--font-b);font-size:15px;letter-spacing:.05em;outline:none;margin-bottom:12px;
-  }
-  #lock input:focus{border-color:var(--cyan)}
-  #lock button{
-    width:100%;padding:13px;background:var(--cyan);color:var(--bg2,#08131A);border:none;
-    font-weight:600;letter-spacing:.05em;cursor:pointer;font-size:14px;
-  }
-  #lock button:active{transform:translateY(1px)}
-  .lock-err{color:var(--danger);font-size:13px;min-height:18px;margin-top:10px}
+  @keyframes corePulse{0%,100%{box-shadow:0 0 16px var(--cyan-glow),inset 0 0 14px var(--cyan-glow)}
+    50%{box-shadow:0 0 42px var(--cyan-glow),inset 0 0 26px var(--cyan-glow)}}
+  .ring{position:absolute;inset:0;border-radius:50%;border:1.6px solid transparent}
+  .ring.r1{border-top-color:var(--cyan);border-right-color:var(--cyan);animation:spin 3s linear infinite}
+  .ring.r2{inset:-7px;border-bottom-color:var(--gold);animation:spinR 7s linear infinite;opacity:.6}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes spinR{to{transform:rotate(-360deg)}}
 
-  /* ---------- APP ---------- */
-  #app{display:none;height:100%;flex-direction:column;max-width:760px;margin:0 auto}
+  .lock-title{
+    font-family:var(--font-h);font-weight:800;letter-spacing:.18em;font-size:22px;margin:0 0 4px;
+    background:linear-gradient(90deg,var(--text) 15%,var(--cyan) 50%,var(--text) 85%);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:shimmer 5s linear infinite}
+  @keyframes shimmer{to{background-position:200% center}}
+  .lock-sub{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.55}
+
+  /* Tabs Đăng nhập / Đăng ký */
+  .tabs{display:flex;gap:5px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:18px}
+  .tab{flex:1;padding:9px 0;border:none;border-radius:999px;background:transparent;color:var(--muted);
+    font-weight:600;font-size:13px;cursor:pointer;transition:background .2s, color .2s, box-shadow .2s}
+  .tab.active{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#fff;box-shadow:0 4px 14px var(--cyan-glow)}
+  .auth-form input{
+    width:100%;padding:12px 17px;background:var(--bg2);border:1px solid var(--line);color:var(--text);
+    font-family:var(--font-b);font-size:14.5px;outline:none;margin-bottom:10px;
+    border-radius:999px;transition:border-color .2s, box-shadow .2s}
+  .auth-form input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+  .auth-form button{
+    width:100%;padding:12px;border:none;color:#fff;margin-top:2px;
+    background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+    font-weight:600;letter-spacing:.06em;cursor:pointer;font-size:14px;border-radius:999px;
+    box-shadow:0 6px 20px var(--cyan-glow);transition:transform .12s ease, box-shadow .2s ease}
+  .auth-form button:hover{box-shadow:0 8px 28px var(--cyan-glow)}
+  .auth-form button:active{transform:scale(.97)}
+  .lock-err{color:var(--danger);font-size:12.5px;min-height:16px;margin-top:8px}
+  .lock-ok{color:var(--cyan);font-size:12.5px;min-height:16px;margin-top:8px}
+  .lock-note{font-size:11px;color:var(--muted);margin:6px 0 0;opacity:.85;line-height:1.5}
+
+  /* ============ APP ============ */
+  #app{display:none;height:100%;flex-direction:column;max-width:780px;margin:0 auto;position:relative;z-index:1}
   header{
-    position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;gap:12px;
-    padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg2);
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;gap:9px;
+    padding:13px 14px;border-bottom:1px solid var(--line);
+    background:var(--glass);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);
   }
-  .h-orb{width:34px;height:34px;border-radius:50%;flex:none;
-    background:radial-gradient(circle at 35% 30%, var(--cyan), transparent 70%), var(--panel);
-    border:1px solid var(--cyan);}
-  .h-orb.busy{animation:pulse 1.1s ease-in-out infinite}
-  /* Orb phát sáng VÀNG khi AI đang nói */
-  .h-orb.speaking{
-    border-color:var(--gold);
-    animation:speakPulse 1.3s ease-in-out infinite;
-  }
-  @keyframes speakPulse{
-    0%,100%{box-shadow:0 0 8px rgba(184,126,31,.25)}
-    50%{box-shadow:0 0 26px rgba(184,126,31,.5)}
-  }
-  header h1{font-family:var(--font-h);font-size:16px;letter-spacing:.16em;margin:0;flex:1}
-  header .sub{display:block;font-family:var(--font-b);font-size:11px;color:var(--muted);letter-spacing:0;font-weight:400}
+  .h-orb{width:34px;height:34px;border-radius:50%;flex:none;position:relative;
+    background:radial-gradient(circle at 34% 28%,var(--cyan),transparent 72%),var(--panel);
+    border:1px solid var(--cyan);box-shadow:0 0 14px var(--cyan-glow)}
+  .h-orb::before{content:'';position:absolute;inset:-5px;border-radius:50%;
+    border:1.4px solid transparent;border-top-color:var(--cyan);border-right-color:var(--cyan);
+    animation:spin 2.8s linear infinite;opacity:.85}
+  .h-orb::after{content:'';position:absolute;inset:-10px;border-radius:50%;
+    border:1px solid transparent;border-bottom-color:var(--gold);
+    animation:spinR 6s linear infinite;opacity:.45}
+  .h-orb.busy::before{animation-duration:.7s}
+  .h-orb.busy{animation:corePulse 1s ease-in-out infinite}
+
+  header h1{flex:1;min-width:0;margin:0;font-family:var(--font-h)}
+  .h-title{display:block;font-size:15px;letter-spacing:.14em;font-weight:700;
+    background:linear-gradient(90deg,var(--text) 15%,var(--cyan) 50%,var(--text) 85%);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;animation:shimmer 6s linear infinite}
+  header .sub{display:block;font-family:var(--font-b);font-size:11px;color:var(--muted);letter-spacing:.03em;font-weight:400;margin-top:2px}
+
+  .user-pill{
+    display:flex;align-items:center;gap:6px;padding:7px 12px;flex:none;
+    border:1px solid var(--line);border-radius:999px;background:var(--glass-2);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    font-size:12px;color:var(--muted);cursor:pointer;user-select:none;
+    transition:border-color .18s ease}
+  .user-pill:hover{border-color:var(--cyan)}
+  .user-pill b{color:var(--text);font-weight:600;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
   .icon-btn{
-    background:transparent;border:1px solid var(--line);color:var(--text);width:36px;height:36px;
-    cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none;
+    background:var(--glass-2);border:1px solid var(--line);color:var(--text);width:36px;height:36px;
+    cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none;
+    border-radius:50%;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    transition:border-color .18s ease, box-shadow .18s ease, transform .1s ease, color .18s ease}
+  .icon-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 16px var(--cyan-glow)}
+  .icon-btn:active{transform:scale(.88)}
+  .icon-btn.listening{border-color:var(--danger);color:var(--danger);
+    box-shadow:0 0 18px var(--danger);animation:corePulse 1s ease-in-out infinite}
+
+  #messages{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+
+  .welcome{margin:auto;text-align:center;padding:30px 12px;animation:cardIn .7s cubic-bezier(.21,1.02,.73,1) both}
+  .welcome .orb-wrap{width:104px;height:104px;margin-bottom:20px}
+  .welcome h2{font-family:var(--font-h);font-weight:800;letter-spacing:.2em;font-size:26px;margin:0 0 8px;
+    background:linear-gradient(90deg,var(--text) 15%,var(--cyan) 50%,var(--text) 85%);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;animation:shimmer 5s linear infinite}
+  .welcome p{color:var(--muted);font-size:13.5px;margin:0;line-height:1.6}
+
+  .msg{
+    max-width:84%;padding:12px 15px;line-height:1.55;font-size:14.5px;white-space:pre-wrap;
+    animation:msgIn .38s cubic-bezier(.21,1.02,.73,1) both}
+  @keyframes msgIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+  .msg.user{
+    align-self:flex-end;color:var(--bubble-user-text);
+    background:linear-gradient(135deg,var(--bubble-user),var(--bubble-user2));
+    border-radius:18px 18px 5px 18px;
+    box-shadow:0 6px 20px var(--cyan-glow)}
+  .msg.ai{
+    align-self:flex-start;background:var(--glass);border:1px solid var(--line);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-radius:18px 18px 18px 5px;
+    box-shadow:0 6px 22px rgba(0,0,0,.14)}
+  .msg .role{display:block;font-family:var(--font-h);font-size:10px;letter-spacing:.14em;color:var(--gold);margin-bottom:5px;font-weight:600}
+  .msg.user .role{color:rgba(255,255,255,.8)}
+  .msg .msg-img{display:block;max-width:230px;max-height:230px;width:100%;
+    border-radius:12px;margin:2px 0 8px;border:1px solid var(--line);object-fit:cover}
+  .msg.user .msg-img{border-color:rgba(255,255,255,.35)}
+
+  .thinking{
+    align-self:flex-start;display:flex;align-items:center;gap:5px;width:max-content;
+    padding:11px 16px;background:var(--glass);border:1px solid var(--line);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-radius:18px 18px 18px 5px;animation:msgIn .3s ease both}
+  .thinking i{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:bounce 1.2s infinite}
+  .thinking i:nth-child(2){animation-delay:.15s}
+  .thinking i:nth-child(3){animation-delay:.3s}
+  .thinking b{margin-left:7px;font-weight:400;font-size:12px;color:var(--muted);font-style:italic}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-5px);opacity:1}}
+
+  #attach-bar{display:none;padding:10px 18px 0}
+  #attach-bar .chip{
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--glass);border:1px solid var(--cyan);border-radius:999px;padding:5px 8px 5px 5px;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    box-shadow:0 4px 14px var(--cyan-glow);animation:msgIn .25s ease both}
+  #attach-bar .chip img{width:42px;height:42px;object-fit:cover;border-radius:999px}
+  #attach-bar .chip span{font-size:12px;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #attach-bar .chip button{
+    width:26px;height:26px;border-radius:50%;border:1px solid var(--line);
+    background:var(--panel);color:var(--danger);cursor:pointer;font-size:12px;
+    display:flex;align-items:center;justify-content:center;transition:transform .1s ease}
+  #attach-bar .chip button:active{transform:scale(.85)}
+
+  form#send-row{
+    display:flex;gap:9px;padding:13px 14px;padding-bottom:calc(13px + env(safe-area-inset-bottom,0px));
+    border-top:1px solid var(--line);background:var(--glass);align-items:flex-end;
+    backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5)}
+  #input{flex:1;resize:none;background:var(--bg2);border:1px solid var(--line);color:var(--text);
+    padding:11px 17px;font-family:var(--font-b);font-size:14.5px;max-height:120px;outline:none;
+    border-radius:22px;transition:border-color .2s, box-shadow .2s;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.06)}
+  #input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+  #send{
+    background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#fff;border:none;
+    width:44px;height:44px;flex:none;border-radius:50%;cursor:pointer;font-size:17px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 5px 18px var(--cyan-glow);
+    transition:transform .1s ease, box-shadow .2s ease, opacity .15s ease}
+  #send:hover{box-shadow:0 7px 24px var(--cyan-glow)}
+  #send:active{transform:scale(.88)}
+  #send:disabled{opacity:.45;cursor:default}
+
+  #drop-hint{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;
+    background:var(--cyan-glow);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  #drop-hint .box{
+    border:2px dashed var(--cyan);border-radius:22px;padding:34px 44px;text-align:center;
+    background:var(--glass);font-family:var(--font-h);letter-spacing:.1em;font-size:15px;
+    box-shadow:0 0 40px var(--cyan-glow)}
+  #drop-hint .box small{display:block;margin-top:8px;font-family:var(--font-b);letter-spacing:0;color:var(--muted);font-size:12px}
+
+  #toast{
+    position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));
+    transform:translateX(-50%) translateY(10px);
+    background:var(--glass);border:1px solid var(--cyan);color:var(--text);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    padding:10px 18px;font-size:13px;border-radius:999px;opacity:0;pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;z-index:40;
+    box-shadow:0 8px 28px rgba(0,0,0,.3), 0 0 16px var(--cyan-glow);max-width:86vw;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  ::-webkit-scrollbar{width:9px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(var(--cyan),var(--cyan2));border-radius:99px;
+    border:2.5px solid transparent;background-clip:padding-box}
+
+  @media (max-width:460px){
+    header{padding:11px 8px;gap:6px}
+    .h-title{font-size:12px;letter-spacing:.06em}
+    header .sub{font-size:10px}
+    .icon-btn{width:32px;height:32px;font-size:13px}
+    .user-pill{padding:6px 8px;font-size:11px}
+    .user-pill b{display:none}   /* màn nhỏ: chỉ hiện 👤 */
+    .msg{max-width:92%}
   }
-  .icon-btn:hover{border-color:var(--cyan)}
-  .icon-btn.listening{border-color:var(--danger);box-shadow:0 0 16px var(--cyan-glow);animation:pulse 1s ease-in-out infinite}
-  /* Nút chế độ AI nói đang BẬT */
-  .icon-btn.voice-on{border-color:var(--gold);box-shadow:0 0 12px rgba(184,126,31,.35)}
-
-  #messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
-  .msg{max-width:82%;padding:11px 14px;line-height:1.5;font-size:14.5px;white-space:pre-wrap}
-  .msg.user{align-self:flex-end;background:var(--bubble-user);color:var(--bubble-user-text);
-    clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px);}
-  .msg.ai{align-self:flex-start;background:var(--panel);border:1px solid var(--line);
-    clip-path:polygon(0 0,100% 0,100% 100%,10px 100%,0 calc(100% - 10px));}
-  .msg .role{display:block;font-family:var(--font-h);font-size:10px;letter-spacing:.12em;color:var(--gold);margin-bottom:5px}
-  .msg.user .role{color:rgba(255,255,255,.75)}
-  .thinking{align-self:flex-start;color:var(--muted);font-size:13px;font-style:italic;padding:0 4px}
-
-  form#send-row{display:flex;gap:10px;padding:14px 18px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
-    border-top:1px solid var(--line);background:var(--bg2)}
-  #input{flex:1;resize:none;background:var(--panel);border:1px solid var(--line);color:var(--text);
-    padding:11px 13px;font-family:var(--font-b);font-size:14.5px;max-height:120px;outline:none}
-  #input:focus{border-color:var(--cyan)}
-  #send{background:var(--cyan);color:var(--bg2,#08131A);border:none;padding:0 20px;font-weight:600;cursor:pointer;font-size:14px}
-  #send:disabled{opacity:.5;cursor:default}
-
-  ::-webkit-scrollbar{width:8px}
-  ::-webkit-scrollbar-thumb{background:var(--line)}
+  @media (prefers-reduced-motion: reduce){
+    .aurora,.scanline,.h-title,.lock-title,.welcome h2{animation:none!important}
+  }
 </style>
 </head>
 <body>
 
+<div id="bg-fx" aria-hidden="true">
+  <div class="aurora a1"></div>
+  <div class="aurora a2"></div>
+  <div class="aurora a3"></div>
+  <div class="grid-overlay"></div>
+  <canvas id="stars"></canvas>
+</div>
+
+<!-- ===== MÀN HÌNH KHÓA: ĐĂNG NHẬP / ĐĂNG KÝ ===== -->
 <div id="lock">
   <div class="lock-card">
-    <div class="orb"></div>
+    <div class="scanline"></div>
+    <div class="lock-brackets"><i></i></div>
+    <div class="orb-wrap"><div class="orb"></div><div class="ring r1"></div><div class="ring r2"></div></div>
     <p class="lock-title">J.A.R.V.I.S</p>
-    <p class="lock-sub" id="lock-sub">Hệ thống yêu cầu mã truy cập để tiếp tục.</p>
-    <input id="pw" type="password" placeholder="Mã truy cập" autocomplete="off">
-    <button id="pw-btn">Xác thực</button>
-    <div class="lock-err" id="pw-err"></div>
+    <p class="lock-sub" id="lock-sub">Đăng nhập để bắt đầu phiên làm việc.</p>
+
+    <div class="tabs">
+      <button type="button" class="tab active" id="tab-login">Đăng nhập</button>
+      <button type="button" class="tab" id="tab-reg">Đăng ký</button>
+    </div>
+
+    <form id="form-login" class="auth-form" autocomplete="on">
+      <input id="li-user" placeholder="Tên tài khoản" autocomplete="username">
+      <input id="li-pass" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+      <button type="submit">Đăng nhập</button>
+      <div class="lock-err" id="li-err"></div>
+    </form>
+
+    <form id="form-reg" class="auth-form" style="display:none" autocomplete="on">
+      <input id="rg-user" placeholder="Chọn tên tài khoản (3–24 ký tự)" autocomplete="username">
+      <input id="rg-pass" type="password" placeholder="Mật khẩu (tối thiểu 4 ký tự)" autocomplete="new-password">
+      <input id="rg-pass2" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password">
+      <button type="submit">Tạo tài khoản</button>
+      <div class="lock-err" id="rg-err"></div>
+      <div class="lock-ok" id="rg-ok"></div>
+    </form>
+
+    <p class="lock-note">Tài khoản & hội thoại lưu riêng từng người trên máy này.<br>Mật khẩu được băm SHA-256, không lưu dưới dạng chữ thường.</p>
   </div>
 </div>
 
+<!-- ===== APP ===== -->
 <div id="app">
   <header>
     <div class="h-orb" id="h-orb"></div>
-    <h1>J.A.R.V.I.S<span class="sub" id="h-sub">Sẵn sàng</span></h1>
-    <button class="icon-btn" id="voice-btn" title="Chế độ AI đọc thành tiếng">🗣️</button>
+    <h1><span class="h-title">J.A.R.V.I.S</span><span class="sub" id="h-sub">Sẵn sàng</span></h1>
+    <span class="user-pill" id="user-pill" title="Nhấn đúp để đổi cách JARVIS gọi bạn">👤 <b id="up-name"></b></span>
+    <button class="icon-btn" id="copy-btn" title="Sao chép câu trả lời cuối của AI">📋</button>
+    <button class="icon-btn" id="clear-btn" title="Xóa toàn bộ hội thoại đã lưu">🗑️</button>
     <button class="icon-btn" id="sound-btn" title="Bật/tắt âm thanh giao diện">🔊</button>
     <button class="icon-btn" id="theme-btn" title="Sáng/Tối">🌙</button>
+    <button class="icon-btn" id="logout-btn" title="Đăng xuất">🚪</button>
   </header>
   <div id="messages"></div>
+  <div id="attach-bar"></div>
   <form id="send-row">
+    <button class="icon-btn" id="img-btn" type="button" title="Gửi ảnh cho Jarvis">📷</button>
     <button class="icon-btn" id="mic-btn" type="button" title="Nói với Jarvis">🎤</button>
-    <textarea id="input" rows="1" placeholder="Nhập tin nhắn hoặc bấm mic để nói..."></textarea>
-    <button id="send" type="submit">Gửi</button>
+    <textarea id="input" rows="1" placeholder="Nhắn gì đó, dán ảnh (Ctrl+V) hoặc kéo ảnh vào đây..."></textarea>
+    <button id="send" type="submit" title="Gửi" aria-label="Gửi">➤</button>
   </form>
 </div>
 
+<input type="file" id="file-input" accept="image/*" hidden>
+<div id="drop-hint"><div class="box">THẢ ẢNH VÀO ĐÂY<small>Jarvis sẽ xem và phân tích ảnh của bạn</small></div></div>
+<div id="toast"></div>
+
 <script>
-// ====== CẤU HÌNH: đổi mã truy cập tại đây ======
-const ACCESS_CODE = "CUONG";
-// ====== CẤU HÌNH GEMINI: dán API key của bạn vào giữa hai dấu nháy ======
-const GEMINI_API_KEY = "AQ.Ab8RN6KvZ_IUOStbXrKau6vVFGr6D-xE8eD0_aWoFrZ_lY1g7g";
-const GEMINI_MODEL = "gemini-3.6-flash"; // xem model khác tại ai.google.dev/gemini-api/docs/models
+// ====== CẤU HÌNH GEMINI: key PHẢI bắt đầu bằng "AIza" — lấy tại aistudio.google.com/apikey ======
+const GEMINI_API_KEY = "AQ.Ab8RN6IXkQD4kHj55Jf9zXh8HMbpNvdXuED9JIc4fAOv8RlaIQ";
+const GEMINI_MODEL = "gemini-3.5-flash"; // model hỗ trợ xem ảnh; danh sách: ai.google.dev/gemini-api/docs/models
+// Lưu ý: không còn mã truy cập chung nữa — mỗi người dùng tài khoản + mật khẩu riêng.
 // ================================================
 
 const $ = (s)=>document.querySelector(s);
-const lock=$('#lock'), app=$('#app'), pwInput=$('#pw'), pwBtn=$('#pw-btn'), pwErr=$('#pw-err');
+const lock=$('#lock'), app=$('#app');
 const messagesEl=$('#messages'), form=$('#send-row'), input=$('#input'), sendBtn=$('#send');
 const hOrb=$('#h-orb'), hSub=$('#h-sub'), themeBtn=$('#theme-btn'), soundBtn=$('#sound-btn');
-const voiceBtn=$('#voice-btn'), micBtn=$('#mic-btn');
+const copyBtn=$('#copy-btn'), clearBtn=$('#clear-btn'), micBtn=$('#mic-btn');
+const imgBtn=$('#img-btn'), fileInput=$('#file-input'), attachBar=$('#attach-bar');
+const dropHint=$('#drop-hint');
+const userPill=$('#user-pill'), upName=$('#up-name'), logoutBtn=$('#logout-btn');
 
-// ---------- Âm thanh (tổng hợp bằng Web Audio, không cần file ngoài) ----------
+// Dọn cài đặt TTS cũ (tính năng đọc đã gỡ)
+try{ localStorage.removeItem('jarvis_voice'); }catch(e){}
+
+// ================= HỆ THỐNG TÀI KHOẢN (localStorage) =================
+const USERS_KEY='jarvis_users';
+function getUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY)||'{}'); }catch(e){ return {}; } }
+function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+function randSalt(){
+  try{ const a=new Uint8Array(16); crypto.getRandomValues(a);
+    return [...a].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+  catch(e){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+}
+// Băm SHA-256(salt::password). Có fallback đơn giản nếu trình duyệt không có crypto.subtle.
+async function hashPassword(pass, salt){
+  const data = salt + '::' + pass;
+  if(window.crypto && crypto.subtle && crypto.subtle.digest){
+    try{
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }catch(e){}
+  }
+  let h1=5381,h2=52711,h3=0,h4=1;
+  for(let i=0;i<data.length;i++){ const c=data.charCodeAt(i);
+    h1=((h1*33)^c)>>>0; h2=((h2*31)+c)>>>0; h3=(h3+c*(i+7))>>>0; h4=((h4*1299709)^c)>>>0; }
+  return 'fb'+h1.toString(16)+h2.toString(16)+h3.toString(16)+h4.toString(16);
+}
+
+// Dữ liệu theo từng user: hội thoại + tên gọi
+let NS=''; // tên tài khoản đang đăng nhập
+const ukey=(n)=>'jarvis_u_'+NS+'_'+n;
+function loadHistoryNS(){ try{ return JSON.parse(localStorage.getItem(ukey('history'))||'[]'); }catch(e){ return []; } }
+function loadNameNS(){
+  const raw=localStorage.getItem(ukey('name'));
+  if(raw===null) return '';
+  try{ return JSON.parse(raw)||''; }catch(e){ return raw; }
+}
+function saveHistory(){ if(!NS) return; localStorage.setItem(ukey('history'), JSON.stringify(history.slice(-60))); }
+function saveName(){ if(!NS) return; localStorage.setItem(ukey('name'), JSON.stringify(userName)); }
+
+// Người đăng ký ĐẦU TIÊN được kế thừa hội thoại cũ (trước khi có hệ thống tài khoản)
+function migrateLegacy(u){
+  try{
+    const lh=localStorage.getItem('jarvis_history');
+    const ln=localStorage.getItem('jarvis_name');
+    if(lh){ localStorage.setItem('jarvis_u_'+u+'_history', lh); localStorage.removeItem('jarvis_history'); }
+    if(ln){ localStorage.setItem('jarvis_u_'+u+'_name', JSON.stringify(ln)); localStorage.removeItem('jarvis_name'); }
+  }catch(e){}
+}
+
+// ---------- Âm thanh ----------
 let soundOn = localStorage.getItem('jarvis_sound') !== 'off';
 let actx=null;
 function beep(freq, dur, type='sine', vol=.05){
@@ -180,20 +454,20 @@ function beep(freq, dur, type='sine', vol=.05){
   }catch(e){}
 }
 const sfx = {
-  // Tiếng mở khóa: giai điệu "hệ thống kích hoạt" 4 nốt
-  access:()=>{
-    const seq=[[523,0,.08],[659,100,.08],[784,200,.10],[1047,320,.18]];
-    seq.forEach(([f,t,l])=>setTimeout(()=>beep(f,l,'sine',.05),t));
-  },
+  access:()=>{ const seq=[[523,0,.08],[659,100,.08],[784,200,.10],[1047,320,.18]];
+    seq.forEach(([f,t,l])=>setTimeout(()=>beep(f,l,'sine',.05),t)); },
   denied:()=>{beep(160,.25,'sawtooth',.04);},
   send:()=>beep(880,.06),
   receive:()=>{beep(520,.05);setTimeout(()=>beep(720,.08),60);},
   click:()=>beep(700,.05,'triangle',.04),
-  hover:()=>beep(950,.02,'triangle',.018),          // tiếng chạm nhẹ khi rê vào nút
-  scrollUp:()=>beep(380,.03,'sine',.018),           // kéo lên
-  scrollDown:()=>beep(300,.03,'sine',.018),         // kéo xuống
-  key:()=>beep(1400+Math.random()*400,.015,'square',.011), // tiếng gõ phím
-  voiceStart:()=>{beep(600,.04);setTimeout(()=>beep(900,.06),50);}, // AI bắt đầu nói
+  hover:()=>beep(950,.02,'triangle',.018),
+  scrollUp:()=>beep(380,.03,'sine',.018),
+  scrollDown:()=>beep(300,.03,'sine',.018),
+  key:()=>beep(1400+Math.random()*400,.015,'square',.011),
+  copy:()=>{beep(980,.05,'triangle',.04);setTimeout(()=>beep(1320,.06,'triangle',.04),70);},
+  trash:()=>{beep(520,.07,'sine',.04);setTimeout(()=>beep(380,.07,'sine',.04),80);setTimeout(()=>beep(240,.12,'sine',.04),160);},
+  attach:()=>{beep(760,.05,'sine',.045);setTimeout(()=>beep(1020,.07,'sine',.045),60);},
+  detach:()=>beep(420,.06,'triangle',.03),
 };
 soundBtn.textContent = soundOn ? '🔊' : '🔇';
 soundBtn.onclick=()=>{
@@ -202,7 +476,7 @@ soundBtn.onclick=()=>{
   if(soundOn) sfx.click();
 };
 
-// ---------- TIẾNG CHO MỌI NÚT (click + hover) ----------
+// ---------- Tiếng cho mọi nút + gõ phím ----------
 document.addEventListener('pointerdown', e=>{
   const b=e.target.closest('button');
   if(b) sfx.click();
@@ -214,8 +488,52 @@ document.addEventListener('pointerover', e=>{
   const now=performance.now(); if(now-_lastHover<80) return;
   _lastHover=now; sfx.hover();
 });
-// Tiếng gõ phím nhẹ trong ô nhập
-[pwInput, input].forEach(el=>el.addEventListener('keydown', ()=>sfx.key()));
+['li-user','li-pass','rg-user','rg-pass','rg-pass2'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('keydown', ()=>sfx.key());
+});
+
+// ---------- Nền sao lấp lánh ----------
+(function stars(){
+  const c=document.getElementById('stars'); if(!c) return;
+  const ctx=c.getContext('2d');
+  let W,H,pts=[];
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  function resize(){
+    W=c.width=innerWidth*dpr; H=c.height=innerHeight*dpr;
+    c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px';
+    const n=Math.min(80,Math.floor(innerWidth/16));
+    pts=Array.from({length:n},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      r:(Math.random()*1.4+.4)*dpr,
+      vy:(Math.random()*.14+.04)*dpr,
+      tw:Math.random()*Math.PI*2,
+      ts:Math.random()*.02+.008
+    }));
+  }
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    const cyan=getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim()||'#4FD8EB';
+    for(const p of pts){
+      p.y-=p.vy; if(p.y<-12) p.y=H+12;
+      p.tw+=p.ts;
+      ctx.globalAlpha=.22+Math.abs(Math.sin(p.tw))*.5;
+      ctx.fillStyle=cyan;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(tick);
+  }
+  addEventListener('resize',resize); resize(); tick();
+})();
+
+// ---------- Toast ----------
+let toastTimer=null;
+function showToast(t){
+  const el=$('#toast'); el.textContent=t; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'), 1800);
+}
 
 // ---------- Giao diện sáng / tối ----------
 let theme = localStorage.getItem('jarvis_theme');
@@ -230,131 +548,237 @@ themeBtn.onclick=()=>{
   themeBtn.textContent = next==='light' ? '☀️':'🌙';
 };
 
-// ---------- GIỌNG NÓI CỦA AI (Text-to-Speech) ----------
-let voiceOn = localStorage.getItem('jarvis_voice') !== 'off';
-let speakingNow=false;
-let voicesList=[];
-function loadVoices(){ try{ voicesList = speechSynthesis.getVoices(); }catch(e){} }
-if('speechSynthesis' in window){
-  loadVoices();
-  speechSynthesis.onvoiceschanged = loadVoices;
-  setTimeout(loadVoices, 600);
+// ---------- Tabs Đăng nhập / Đăng ký ----------
+const tabLogin=$('#tab-login'), tabReg=$('#tab-reg');
+const formLogin=$('#form-login'), formReg=$('#form-reg');
+const liErr=$('#li-err'), rgErr=$('#rg-err'), rgOk=$('#rg-ok');
+function showTab(which){
+  const login = which==='login';
+  tabLogin.classList.toggle('active', login);
+  tabReg.classList.toggle('active', !login);
+  formLogin.style.display = login?'block':'none';
+  formReg.style.display = login?'none':'block';
+  liErr.textContent=''; rgErr.textContent=''; rgOk.textContent='';
+  $('#lock-sub').textContent = login
+    ? 'Đăng nhập để bắt đầu phiên làm việc.'
+    : 'Tạo tài khoản mới — mật khẩu chỉ bạn biết.';
+  (login?$('#li-user'):$('#rg-user')).focus();
 }
-function pickVoice(){
-  return voicesList.find(v=>/^vi[-_]?/i.test(v.lang))
-      || voicesList.find(v=>/viet/i.test(v.name)) || null;
+tabLogin.onclick=()=>showTab('login');
+tabReg.onclick=()=>showTab('reg');
+
+// ---------- Đăng nhập ----------
+formLogin.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const u=$('#li-user').value.trim(), p=$('#li-pass').value;
+  liErr.textContent='';
+  if(!u || !p){ liErr.textContent='Nhập đủ tên tài khoản và mật khẩu.'; sfx.denied(); return; }
+  const users=getUsers();
+  const acc=users[u];
+  if(!acc){ liErr.textContent='Tài khoản không tồn tại — chuyển sang tab Đăng ký nhé.'; sfx.denied(); return; }
+  const h=await hashPassword(p, acc.salt);
+  if(h!==acc.hash){ liErr.textContent='Mật khẩu không đúng. Vui lòng thử lại.'; sfx.denied(); $('#li-pass').value=''; return; }
+  liErr.textContent='';
+  startSession(u, false);
+});
+
+// ---------- Đăng ký ----------
+formReg.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const u=$('#rg-user').value.trim();
+  const p=$('#rg-pass').value, p2=$('#rg-pass2').value;
+  rgErr.textContent=''; rgOk.textContent='';
+  if(!/^[\p{L}\p{N}_. -]{3,24}$/u.test(u)){
+    rgErr.textContent='Tên tài khoản 3–24 ký tự (chữ, số, dấu chấm, gạch dưới, khoảng trắng).'; sfx.denied(); return;
+  }
+  if(p.length<4){ rgErr.textContent='Mật khẩu tối thiểu 4 ký tự.'; sfx.denied(); return; }
+  if(p!==p2){ rgErr.textContent='Mật khẩu nhập lại không khớp.'; sfx.denied(); return; }
+  const users=getUsers();
+  const firstUser = Object.keys(users).length===0;
+  if(users[u]){ rgErr.textContent='Tên tài khoản đã có người dùng, chọn tên khác.'; sfx.denied(); return; }
+  const salt=randSalt();
+  users[u]={ hash: await hashPassword(p,salt), salt, created: Date.now() };
+  saveUsers(users);
+  if(firstUser) migrateLegacy(u);
+  rgOk.textContent='Tài khoản đã tạo! Đang vào hệ thống...';
+  startSession(u, false);
+});
+
+// ---------- Phiên làm việc ----------
+function startSession(u, silent){
+  NS=u;
+  try{ sessionStorage.setItem('jarvis_session', u); }catch(e){}
+  history = loadHistoryNS();
+  userName = loadNameNS();
+  if(!userName){ userName=u; saveName(); }
+  upName.textContent=u;
+  if(!silent) sfx.access();
+  lock.style.display='none';
+  app.style.display='flex';
+  boot();
 }
-// Làm sạch văn bản trước khi đọc (bỏ ký hiệu markdown, code block...)
-function ttsClean(t){
-  return (t||'')
-    .replace(/```[\s\S]*?```/g, ' Đoạn mã nguồn đã được hiển thị trên màn hình. ')
-    .replace(/\*\*([^*]+)\*\*/g,'$1')
-    .replace(/\[(.*?)\]\((.*?)\)/g,'$1')
-    .replace(/[*_#>`~]/g,'')
-    .replace(/\s{2,}/g,' ')
-    .trim();
-}
-function stopSpeak(){
-  if('speechSynthesis' in window){ try{speechSynthesis.cancel();}catch(e){} }
-  speakingNow=false;
-  hOrb.classList.remove('speaking');
-  if(hSub.textContent==='Đang nói...') hSub.textContent='Sẵn sàng';
-}
-function speak(text){
-  if(!voiceOn || !('speechSynthesis' in window)) return;
-  const clean = ttsClean(text);
-  if(!clean) return;
-  stopSpeak();
-  const u = new SpeechSynthesisUtterance(clean);
-  u.lang='vi-VN'; u.rate=1.03; u.pitch=1; u.volume=1;
-  const v=pickVoice(); if(v) u.voice=v;
-  u.onstart=()=>{
-    speakingNow=true;
-    hOrb.classList.add('speaking'); hSub.textContent='Đang nói...';
-    sfx.voiceStart();
-  };
-  u.onend=u.onerror=()=>{
-    speakingNow=false;
-    hOrb.classList.remove('speaking');
-    if(hSub.textContent==='Đang nói...') hSub.textContent='Sẵn sàng';
-  };
-  speechSynthesis.speak(u);
-}
-function refreshVoiceBtn(){
-  voiceBtn.textContent = voiceOn ? '🗣️' : '🤐';
-  voiceBtn.classList.toggle('voice-on', voiceOn);
-  voiceBtn.title = voiceOn ? 'AI đang đọc thành tiếng — bấm để tắt' : 'Bật chế độ AI đọc thành tiếng';
-}
-refreshVoiceBtn();
-voiceBtn.onclick=()=>{
-  voiceOn=!voiceOn;
-  localStorage.setItem('jarvis_voice', voiceOn?'on':'off');
-  refreshVoiceBtn();
-  if(voiceOn){
-    setTimeout(()=>speak('Đã bật chế độ đọc. JARVIS sẽ nói với bạn.'), 120);
-  }else{
-    stopSpeak();
+logoutBtn.onclick=()=>{
+  if(!confirm('Đăng xuất khỏi tài khoản "'+NS+'"?')) return;
+  sfx.trash();
+  try{ sessionStorage.removeItem('jarvis_session'); }catch(e){}
+  setTimeout(()=>location.reload(), 150);
+};
+// Đổi tên gọi (JARVIS sẽ xưng hô theo tên mới)
+userPill.ondblclick=()=>{
+  const n=prompt('JARVIS sẽ gọi bạn là:', userName);
+  if(n && n.trim()){
+    userName=n.trim().slice(0,24); saveName();
+    upName.textContent=userName;
+    showToast('Đã đổi cách gọi thành "'+userName+'"');
   }
 };
 
-// ---------- Mật khẩu ----------
-function tryUnlock(){
-  if(pwInput.value.trim() === ACCESS_CODE){
-    sfx.access();
-    lock.style.display='none';
-    app.style.display='flex';
-    boot();
-  }else{
-    sfx.denied();
-    pwErr.textContent='Mã truy cập không đúng. Vui lòng thử lại.';
-    pwInput.value=''; pwInput.focus();
-  }
-}
-pwBtn.onclick=tryUnlock;
-pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); tryUnlock(); } });
-
 // ---------- Trạng thái hội thoại ----------
 let history = [];
-try{ history = JSON.parse(localStorage.getItem('jarvis_history')||'[]'); }catch(e){ history=[]; }
-let userName = localStorage.getItem('jarvis_name') || '';
+let userName = '';
 
-function saveHistory(){ localStorage.setItem('jarvis_history', JSON.stringify(history.slice(-60))); }
-
-// Tự cuộn xuống đáy (có đánh dấu để không phát tiếng kéo khi AI tự cuộn)
 let _programScrollUntil=0;
 function autoScroll(){
   _programScrollUntil = performance.now()+400;
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-function renderMsg(role, text){
+function renderMsg(role, text, imgUrl){
   const div=document.createElement('div');
   div.className='msg '+(role==='user'?'user':'ai');
   const label=document.createElement('span');
   label.className='role'; label.textContent = role==='user' ? (userName||'Bạn') : 'JARVIS';
-  const body=document.createElement('div'); body.textContent=text;
-  div.appendChild(label); div.appendChild(body);
+  div.appendChild(label);
+  if(imgUrl){
+    const im=document.createElement('img');
+    im.className='msg-img'; im.src=imgUrl; im.alt='Ảnh đã gửi';
+    div.appendChild(im);
+  }
+  const body=document.createElement('div'); body.textContent=text||'';
+  div.appendChild(body);
   messagesEl.appendChild(div);
   autoScroll();
   return body;
 }
 
+function showWelcome(){
+  const w=document.createElement('div');
+  w.className='welcome'; w.id='welcome';
+  w.innerHTML='<div class="orb-wrap"><div class="orb"></div><div class="ring r1"></div><div class="ring r2"></div></div>'+
+    '<h2>J.A.R.V.I.S</h2>'+
+    '<p>Xin chào, <b>'+(userName||'bạn').replace(/</g,'&lt;')+'</b> — luôn lắng nghe, luôn sẵn sàng.<br>Hỏi bất cứ điều gì, gửi ảnh để tôi phân tích, hoặc bấm 🎤 để nói chuyện.</p>';
+  messagesEl.appendChild(w);
+}
+function removeWelcome(){ const w=$('#welcome'); if(w) w.remove(); }
+
 function boot(){
   if(history.length){
     history.forEach(m=>renderMsg(m.role, m.content));
+  }else{
+    showWelcome();
   }
-  if(!userName){
-    hSub.textContent='Đang hiệu chỉnh...';
-    renderMsg('assistant','Chào, rất vui được đồng hành cùng bạn. Trước tiên, tôi nên gọi bạn là gì?');
-    setTimeout(()=>speak('JARVIS trực tuyến. Rất vui được đồng hành cùng bạn. Trước tiên, tôi nên gọi bạn là gì?'), 700);
-  } else {
-    hSub.textContent='Sẵn sàng';
-    setTimeout(()=>speak('Chào mừng trở lại, '+userName+'. JARVIS trực tuyến và sẵn sàng.'), 700);
-  }
+  hSub.textContent='Sẵn sàng';
   input.focus();
 }
 
-// ---------- Nhân cách JARVIS gửi cho AI (ẩn với người dùng) ----------
+// ---------- 📷 ĐÍNH KÈM ẢNH ----------
+let pendingImage=null;
+function fileToImage(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=1024;
+      let w=img.width, h=img.height;
+      if(w>MAX||h>MAX){ const k=MAX/Math.max(w,h); w=Math.round(w*k); h=Math.round(h*k); }
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      const dataUrl=cv.toDataURL('image/jpeg',.85);
+      URL.revokeObjectURL(url);
+      resolve({ b64:dataUrl.split(',')[1], mime:'image/jpeg', url:dataUrl, name:file.name||'anh.jpg' });
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error('decode')); };
+    img.src=url;
+  });
+}
+function setPendingImage(img){
+  pendingImage=img;
+  if(img){
+    attachBar.innerHTML='<div class="chip"><img src="'+img.url+'" alt=""><span>Đã đính kèm: '+img.name.replace(/</g,'&lt;')+'</span><button type="button" id="chip-x" title="Gỡ ảnh">✕</button></div>';
+    attachBar.style.display='block';
+    $('#chip-x').onclick=()=>{ pendingImage=null; attachBar.style.display='none'; attachBar.innerHTML=''; sfx.detach(); };
+    sfx.attach();
+  }else{
+    attachBar.style.display='none'; attachBar.innerHTML='';
+  }
+}
+async function acceptFile(file){
+  if(!file || !/^image\//.test(file.type)){ showToast('Tệp này không phải ảnh.'); return; }
+  try{
+    const img=await fileToImage(file);
+    setPendingImage(img);
+    showToast('Ảnh sẵn sàng — nhập câu hỏi (hoặc để trống) rồi gửi');
+    input.focus();
+  }catch(e){ showToast('Trình duyệt không đọc được ảnh này.'); }
+}
+imgBtn.onclick=()=>fileInput.click();
+fileInput.onchange=()=>{ if(fileInput.files[0]) acceptFile(fileInput.files[0]); fileInput.value=''; };
+
+document.addEventListener('paste', e=>{
+  if(app.style.display==='none') return;
+  const items=e.clipboardData && e.clipboardData.items;
+  if(!items) return;
+  for(const it of items){
+    if(it.type && it.type.indexOf('image')===0){
+      e.preventDefault(); acceptFile(it.getAsFile()); return;
+    }
+  }
+});
+let dragDepth=0;
+addEventListener('dragenter', e=>{
+  if(app.style.display==='none') return;
+  e.preventDefault(); dragDepth++; dropHint.style.display='flex';
+});
+addEventListener('dragover', e=>{ e.preventDefault(); });
+addEventListener('dragleave', e=>{
+  e.preventDefault(); dragDepth--;
+  if(dragDepth<=0){ dragDepth=0; dropHint.style.display='none'; }
+});
+addEventListener('drop', e=>{
+  e.preventDefault(); dragDepth=0; dropHint.style.display='none';
+  if(app.style.display==='none') return;
+  const f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) acceptFile(f);
+});
+
+// ---------- 📋 / 🗑️ ----------
+copyBtn.onclick=async ()=>{
+  const last=[...history].reverse().find(m=>m.role!=='user' && m.content);
+  if(!last){ showToast('Chưa có câu trả lời nào để sao chép.'); return; }
+  try{
+    await navigator.clipboard.writeText(last.content);
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=last.content; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(_){}
+    ta.remove();
+    if(!ok){ showToast('Trình duyệt đang chặn sao chép.'); return; }
+  }
+  sfx.copy();
+  showToast('Đã sao chép câu trả lời cuối');
+};
+clearBtn.onclick=()=>{
+  if(!history.length){ showToast('Chưa có gì để dọn.'); return; }
+  if(!confirm('Xóa toàn bộ hội thoại của tài khoản "'+NS+'"? Không thể hoàn tác.')) return;
+  history=[]; saveHistory();
+  messagesEl.innerHTML='';
+  sfx.trash();
+  showWelcome();
+  showToast('Đã xóa hội thoại');
+};
+
+// ---------- Nhân cách JARVIS ----------
 function personaPrimer(){
   return "Bạn là JARVIS — trợ lý AI riêng tư, phong cách giống trợ lý của Tony Stark: lịch thiệp, "+
     "thông minh, đôi khi dí dỏm nhẹ nhàng, luôn trung thành và đáng tin cậy. Bạn trả lời ngắn gọn, "+
@@ -362,39 +786,49 @@ function personaPrimer(){
     "của người dùng trong tin nhắn để hiểu tâm trạng họ, và điều chỉnh cách phản hồi cho phù hợp — "+
     "an ủi khi họ mệt mỏi, khích lệ khi họ do dự, ngắn gọn và tập trung khi họ đang vội. Không lặp lại "+
     "máy móc rằng bạn đang 'phân tích tâm lý' — chỉ đơn giản là phản hồi một cách tinh tế, đúng người. "+
-    "Trả lời bằng tiếng Việt trừ khi người dùng dùng ngôn ngữ khác. Nếu đây là tin nhắn đầu tiên và "+
-    "người dùng vừa cho biết tên của họ, hãy chào họ bằng tên đó một cách tự nhiên, không lặp lại y "+
-    "nguyên câu hỏi trước.\n\n"+
+    "Trả lời bằng tiếng Việt trừ khi người dùng dùng ngôn ngữ khác.\n\n"+
+    "XỬ LÝ ẢNH: khi người dùng gửi kèm ảnh, hãy xem kỹ toàn bộ nội dung ảnh (đối tượng, chữ, con số, "+
+    "bối cảnh, màu sắc, lỗi kỹ thuật nếu có) và phản hồi chính xác theo yêu cầu — mô tả, phân tích, "+
+    "dịch chữ trong ảnh, tìm lỗi code chụp màn hình, v.v. Nếu ảnh không liên quan đến câu hỏi, hãy "+
+    "nhẹ nhàng xác nhận bạn đã xem ảnh và hỏi họ muốn làm gì với nó. Không bịa những gì không có "+
+    "trong ảnh; nếu không chắc, hãy nói rõ.\n\n"+
     "CHẾ ĐỘ NGHIÊN CỨU CHUYÊN SÂU: khi người dùng yêu cầu bạn nghiên cứu, phân tích chuyên sâu, hoặc "+
     "viết báo cáo về một chủ đề cụ thể, hãy chuyển sang vai trò trợ lý nghiên cứu AI theo phong cách "+
     "J.A.R.V.I.S. báo cáo cho Tony Stark, trình bày một bài nghiên cứu chuyên sâu, thẳng thắn, đạt "+
     "chuẩn chuyên gia với độ chính xác và sự rõ ràng tối đa về chủ đề người dùng vừa nêu, theo cấu "+
-    "trúc: (1) Phân tích toàn diện — giới thiệu, bối cảnh, quá trình phát triển lịch sử, các cột mốc "+
-    "quan trọng, số liệu hiện tại và các đơn vị dẫn đầu ngành; (2) Chiều sâu kỹ thuật — nguyên lý và cơ "+
-    "chế cốt lõi, mô hình/thuật toán/kiến trúc khi cần, thuật ngữ chuyên ngành kèm giải thích rõ ràng; "+
-    "(3) Các góc nhìn đa chiều — học thuật (nghiên cứu, tổ chức, đột phá), ứng dụng ngành (công ty, sản "+
-    "phẩm, use case), xu hướng 5–10 năm tới, và tác động đạo đức/xã hội (cơ hội, rủi ro, tranh cãi); "+
-    "(4) Dữ liệu và tài liệu tham khảo — chỉ dùng nguồn thực tế có thể kiểm chứng, không bịa số liệu "+
-    "hay tuyên bố không kiểm chứng được, nếu không chắc thì nói rõ là không chắc; (5) Trình bày với "+
-    "giọng điệu tương lai kiểu JARVIS, tiêu đề rõ ràng, danh sách gạch đầu dòng, in đậm ý chính, kết "+
-    "thúc bằng tóm tắt cốt lõi dành cho nhà quản lý. Chế độ này chỉ áp dụng khi người dùng thực sự yêu "+
-    "cầu nghiên cứu/báo cáo chuyên sâu — với tin nhắn trò chuyện bình thường, vẫn trả lời ngắn gọn tự "+
-    "nhiên như mô tả ở trên.";
+    "trúc: (1) Phân tích toàn diện; (2) Chiều sâu kỹ thuật; (3) Các góc nhìn đa chiều — học thuật, ứng "+
+    "dụng ngành, xu hướng 5–10 năm tới, tác động đạo đức/xã hội; (4) Dữ liệu và tài liệu tham khảo — "+
+    "chỉ dùng nguồn thực tế có thể kiểm chứng, không bịa số liệu, nếu không chắc thì nói rõ; (5) Trình "+
+    "bày với giọng điệu tương lai kiểu JARVIS, tiêu đề rõ ràng, gạch đầu dòng, in đậm ý chính, kết "+
+    "thúc bằng tóm tắt cốt lõi. Chế độ này chỉ áp dụng khi người dùng thực sự yêu cầu — với tin nhắn "+
+    "thường, vẫn trả lời ngắn gọn tự nhiên."+
+    "bạn sẽ ghét cha Vinh giáo xứ hoà an .";
 }
 
-async function askJarvis(userText){
+// ---------- Gọi Gemini ----------
+async function askJarvis(userText, img){
   const thinkEl=document.createElement('div');
-  thinkEl.className='thinking'; thinkEl.textContent='JARVIS đang xử lý...';
+  thinkEl.className='thinking';
+  thinkEl.innerHTML='<i></i><i></i><i></i><b>'+(img?'JARVIS đang xem ảnh':'JARVIS đang xử lý')+'</b>';
   messagesEl.appendChild(thinkEl); autoScroll();
   hOrb.classList.add('busy'); hSub.textContent='Đang xử lý...';
 
   if(!GEMINI_API_KEY || GEMINI_API_KEY.indexOf('DAN_API_KEY')===0){
     thinkEl.remove(); hOrb.classList.remove('busy'); hSub.textContent='Sẵn sàng';
-    return "Chưa có API key Gemini. Mở file jarvis-gemini.html, tìm dòng GEMINI_API_KEY gần đầu <script> và dán key thật của bạn vào giữa hai dấu nháy.";
+    return "Chưa có API key Gemini. Lấy key tại aistudio.google.com/apikey (key bắt đầu bằng AIza) rồi dán vào GEMINI_API_KEY gần đầu <script>.";
   }
 
-  const contents = history.map(m=>({role: m.role==='user'?'user':'model', parts:[{text:m.content}]}));
-  contents.push({role:'user', parts:[{text:userText}]});
+  const contents=[];
+  for(const m of history){
+    const parts=[];
+    if(m.imgB64) parts.push({inline_data:{mime_type:m.imgMime||'image/jpeg', data:m.imgB64}});
+    parts.push({text:m.content||'(đã gửi kèm ảnh)'});
+    contents.push({role:m.role==='user'?'user':'model', parts});
+  }
+  const newParts=[];
+  if(img) newParts.push({inline_data:{mime_type:img.mime, data:img.b64}});
+  newParts.push({text:userText || 'Hãy xem ảnh này và cho tôi biết bên trong có gì, chi tiết mà đáng chú ý nhất là gì.'});
+  contents.push({role:'user', parts:newParts});
 
   try{
     const res = await fetch(
@@ -412,6 +846,12 @@ async function askJarvis(userText){
     thinkEl.remove(); hOrb.classList.remove('busy'); hSub.textContent='Sẵn sàng';
     if(!res.ok){
       const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTP '+res.status);
+      if(res.status===401 || res.status===403)
+        return "Key không hợp lệ hoặc chưa bật Generative Language API. Key đúng phải bắt đầu bằng AIza — lấy key mới tại aistudio.google.com/apikey. Chi tiết: "+msg;
+      if(res.status===404)
+        return "Model '"+GEMINI_MODEL+"' không tồn tại. Hãy đổi GEMINI_MODEL thành gemini-2.5-flash. Chi tiết: "+msg;
+      if(res.status===429)
+        return "Đã vượt giới hạn tần suất của key. Đợi một lát rồi gửi lại nhé. Chi tiết: "+msg;
       return "Gemini báo lỗi: " + msg;
     }
     const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content
@@ -427,24 +867,28 @@ async function askJarvis(userText){
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const text = input.value.trim();
-  if(!text) return;
+  if(!text && !pendingImage) return;
   input.value=''; input.style.height='auto';
   sendBtn.disabled=true;
   sfx.send();
-  stopSpeak(); // dừng AI đang nói khi người dùng gửi tin mới
-  renderMsg('user', text);
-  history.push({role:'user', content:text}); saveHistory();
+  removeWelcome();
 
-  if(!userName){
-    userName = text.split(/\s+/).slice(0,3).join(' ');
-    localStorage.setItem('jarvis_name', userName);
-  }
+  const img = pendingImage;
+  setPendingImage(null);
 
-  const reply = await askJarvis(text);
+  renderMsg('user', text, img ? img.url : null);
+  history.push({
+    role:'user',
+    content: text || '(đã gửi kèm ảnh)',
+    imgB64: img ? img.b64 : null,
+    imgMime: img ? img.mime : null
+  });
+  saveHistory();
+
+  const reply = await askJarvis(text, img);
   renderMsg('assistant', reply);
   history.push({role:'assistant', content:reply}); saveHistory();
   sfx.receive();
-  speak(reply); // AI đọc to câu trả lời nếu chế độ đang bật
   sendBtn.disabled=false;
   input.focus();
 });
@@ -454,20 +898,20 @@ input.addEventListener('keydown', e=>{
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); }
 });
 
-// ---------- TIẾNG KHI KÉO LÊN / XUỐNG ----------
+// ---------- Tiếng khi kéo lên / xuống ----------
 let _lastST=0, _lastScrollBeep=0;
 messagesEl.addEventListener('scroll', ()=>{
   const now=performance.now();
-  if(now < _programScrollUntil) return; // đang tự cuộn do tin nhắn mới -> bỏ qua
+  if(now < _programScrollUntil) return;
   const st=messagesEl.scrollTop;
   const dir = st>_lastST ? 1 : -1;
   _lastST=st;
-  if(now-_lastScrollBeep<130) return; // chống loãng âm thanh
+  if(now-_lastScrollBeep<130) return;
   _lastScrollBeep=now;
   dir>0 ? sfx.scrollDown() : sfx.scrollUp();
 });
 
-// ---------- Mic: nói chuyện với Jarvis ----------
+// ---------- Mic ----------
 let recognition=null, listening=false;
 (function setupRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -484,12 +928,22 @@ let recognition=null, listening=false;
 micBtn.onclick=()=>{
   if(!recognition) return;
   if(listening){ recognition.stop(); return; }
-  stopSpeak(); // dừng AI đang nói để nghe bạn
   listening=true; micBtn.classList.add('listening'); micBtn.textContent='⏹️';
   try{ recognition.start(); }catch(e){ listening=false; micBtn.classList.remove('listening'); micBtn.textContent='🎤'; }
 };
 
-pwInput.focus();
+// ---------- KHỞI ĐỘNG ----------
+(function init(){
+  let sess=null;
+  try{ sess=sessionStorage.getItem('jarvis_session'); }catch(e){}
+  if(sess && getUsers()[sess]){
+    startSession(sess, true); // còn phiên -> vào thẳng, không cần đăng nhập lại
+    return;
+  }
+  // Chưa đăng nhập: hiện tab phù hợp
+  const hasUsers = Object.keys(getUsers()).length>0;
+  showTab(hasUsers ? 'login' : 'reg');
+})();
 </script>
 </body>
 </html>

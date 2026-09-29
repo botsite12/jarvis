@@ -1,311 +1,1140 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SYTION — Trợ lý AI giáo xứ Hòa An</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SYTION — Trợ lý AI cá nhân</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%2346e0ff' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' fill='%2346e0ff' text-anchor='middle' font-family='monospace'%3ES%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#040912;--panel:rgba(9,20,36,.72);--line:#17304c;--cy:#35e0ff;--gold:#f2c14e;--red:#ff5c6c;--tx:#dce7f3;--mu:#6f86a0;--hud:'Orbitron','Be Vietnam Pro',sans-serif}
-*{box-sizing:border-box;margin:0}
+:root{
+  --bg:#04080d;
+  --panel:rgba(8,18,26,.62);
+  --line:rgba(80,220,255,.16);
+  --line-strong:rgba(80,220,255,.45);
+  --cyan:#46e0ff;
+  --cyan-soft:rgba(70,224,255,.09);
+  --amber:#ffb54d;
+  --red:#ff5f56;
+  --text:#c9e5ee;
+  --bright:#eaf8fd;
+  --muted:#5d808d;
+  --hud:'Chakra Petch',sans-serif;
+  --body:'Be Vietnam Pro',sans-serif;
+}
+*{box-sizing:border-box}
 html,body{height:100%}
-body{background:radial-gradient(1100px 650px at 50% -8%,#0c2440 0,var(--bg) 62%);color:var(--tx);font:400 15px/1.6 'Be Vietnam Pro',system-ui,sans-serif;overflow:hidden}
-#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
-.scan{position:fixed;inset:0;z-index:5;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(53,224,255,.035) 0 1px,transparent 1px 3px);mix-blend-mode:screen}
-.scan::after{content:"";position:absolute;left:0;right:0;height:120px;top:-120px;background:linear-gradient(transparent,rgba(53,224,255,.07),transparent);animation:sweep 7s linear infinite}
-@keyframes sweep{to{transform:translateY(calc(100vh + 240px))}}
-.app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;max-width:860px;margin:0 auto;padding:0 16px}
-header{display:flex;justify-content:space-between;align-items:center;padding:14px 0 8px;gap:10px}
-.brand{font:800 20px var(--hud);letter-spacing:.38em;color:var(--cy);text-shadow:0 0 14px rgba(53,224,255,.6);position:relative}
-.brand.glitch{animation:gl .5s steps(2) 2}
-@keyframes gl{0%{transform:translate(2px,0);text-shadow:-3px 0 var(--red),3px 0 var(--gold)}50%{transform:translate(-2px,1px)}100%{transform:none}}
-.sub{font-size:11px;color:var(--mu);letter-spacing:.03em}
-.tel{font:500 11px var(--hud);color:var(--mu);text-align:right;line-height:1.5}
-.tel b{color:var(--cy);font-weight:500}
-.led{display:inline-block;width:7px;height:7px;border-radius:50%;background:#3dff9a;box-shadow:0 0 8px #3dff9a;margin-right:6px;animation:bl 2s infinite}
-.led.bad{background:var(--red);box-shadow:0 0 8px var(--red)}
-@keyframes bl{50%{opacity:.35}}
-.tools{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px}
-.tg{background:rgba(9,20,36,.6);border:1px solid var(--line);color:var(--mu);padding:5px 12px;border-radius:99px;font:inherit;font-size:12px;cursor:pointer;transition:.2s}
-.tg[aria-pressed=true]{color:var(--gold);border-color:var(--gold);box-shadow:0 0 12px rgba(242,193,78,.25)}
-.stage{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
-#orb{width:220px;height:220px;cursor:pointer}
-#status{font:500 12px var(--hud);letter-spacing:.14em;color:var(--cy);min-height:20px;text-align:center}
-main{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;margin-top:6px;background:var(--panel);backdrop-filter:blur(6px);border:1px solid var(--line);position:relative;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.corner{position:absolute;width:14px;height:14px;border:2px solid var(--cy);pointer-events:none;z-index:3;filter:drop-shadow(0 0 4px var(--cy))}
-.tl{top:-1px;left:-1px;border-right:0;border-bottom:0}.tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
-.bl{bottom:-1px;left:-1px;border-right:0;border-top:0}.br{bottom:-1px;right:-1px;border-left:0;border-top:0}
-.panelwrap{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
-.m{max-width:86%;margin:10px 0;padding:10px 14px;white-space:pre-wrap;word-wrap:break-word;animation:in .35s cubic-bezier(.2,.9,.3,1)}
-@keyframes in{from{opacity:0;transform:translateY(8px) scale(.98)}}
-.m.u{margin-left:auto;background:#10314f;border:1px solid #1f5079;border-radius:14px 14px 3px 14px}
-.m.a{background:rgba(6,16,30,.85);border:1px solid var(--line);border-left:2px solid var(--cy);border-radius:3px 14px 14px 14px;box-shadow:0 0 18px rgba(53,224,255,.07)}
-.m.a.typing::after{content:"▍";color:var(--cy);animation:bl .8s infinite}
-.m.err{border-left-color:var(--red);color:#ffb0b9}
-.m em{color:var(--gold);font-style:italic;opacity:.9}
-.dots span{display:inline-block;width:6px;height:6px;margin:0 3px;border-radius:50%;background:var(--cy);animation:dot 1s infinite}
-.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
-@keyframes dot{0%,80%,100%{transform:scale(.5);opacity:.4}40%{transform:scale(1.2);opacity:1}}
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 0 0}
-.chips button{background:rgba(9,20,36,.7);border:1px solid var(--line);color:var(--tx);padding:7px 14px;border-radius:99px;font:inherit;font-size:13px;cursor:pointer;transition:.2s}
-.chips button:hover{border-color:var(--cy);box-shadow:0 0 14px rgba(53,224,255,.3);transform:translateY(-1px)}
-form{display:flex;gap:8px;padding:10px 0 calc(14px + env(safe-area-inset-bottom,0px))}
-input{flex:1;min-width:0;background:rgba(9,20,36,.85);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:12px 14px;font:inherit;transition:.2s}
-input:focus{outline:none;border-color:var(--cy);box-shadow:0 0 16px rgba(53,224,255,.25)}
-button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
-.b{position:relative;overflow:hidden;background:var(--cy);color:#04121c;border:0;border-radius:12px;padding:0 20px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer}
-.b.mic{background:rgba(9,20,36,.85);color:var(--cy);border:1px solid var(--line);width:48px;padding:0;font-size:18px}
-.b.mic.on{background:var(--gold);color:#241a00;animation:ring 1.2s infinite}
-@keyframes ring{0%{box-shadow:0 0 0 0 rgba(242,193,78,.6)}100%{box-shadow:0 0 0 16px transparent}}
-.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rp .6s linear}
-@keyframes rp{to{transform:scale(4);opacity:0}}
-#boot{position:fixed;inset:0;z-index:20;background:radial-gradient(800px 500px at 50% 40%,#0a2038,#02060c);display:flex;align-items:center;justify-content:center;transition:opacity .9s,visibility .9s}
-#boot.off{opacity:0;visibility:hidden}
-.bootbox{width:min(520px,90vw);font:500 12px/1.9 var(--hud);color:var(--cy)}
-#bootlog{min-height:190px;white-space:pre-wrap;color:#7fdcf0}
-#go{margin-top:14px;width:100%;padding:14px;background:transparent;border:1px solid var(--cy);color:var(--cy);font:800 14px var(--hud);letter-spacing:.3em;border-radius:6px;cursor:pointer;box-shadow:0 0 22px rgba(53,224,255,.3),inset 0 0 22px rgba(53,224,255,.1);animation:bl 1.6s infinite}
-#go:hover{background:rgba(53,224,255,.12)}
-#go[disabled]{animation:none;opacity:.5;cursor:default}
-@media(max-width:560px){#orb{width:150px;height:150px}.m{max-width:94%}.tel{display:none}.brand{font-size:17px}}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}.scan::after{display:none}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);overflow:hidden;display:flex;flex-direction:column}
+::selection{background:rgba(70,224,255,.28)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(70,224,255,.22)}
+::-webkit-scrollbar-thumb:hover{background:rgba(70,224,255,.4)}
+
+#bgCanvas{position:fixed;inset:0;z-index:0}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.45;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px)}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at 50% 42%,transparent 55%,rgba(0,0,0,.5) 100%)}
+
+header{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;
+  padding:13px 22px;border-bottom:1px solid var(--line);background:rgba(4,10,15,.55);backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:38px;height:38px;border:1px solid var(--line-strong);position:relative;display:grid;place-items:center;
+  font:600 17px var(--hud);color:var(--cyan)}
+.brand-mark::before{content:'';position:absolute;inset:3px;border:1px solid rgba(70,224,255,.25);animation:markSpin 14s linear infinite}
+@keyframes markSpin{to{transform:rotate(360deg)}}
+.brand h1{margin:0;font:600 21px var(--hud);letter-spacing:.42em;color:var(--bright);margin-right:-.42em}
+.brand-sub{font:400 9.5px var(--hud);letter-spacing:.3em;color:var(--muted)}
+.head-right{display:flex;align-items:center;gap:14px}
+.clock{text-align:right;line-height:1.3}
+.clock span{display:block;font:500 16px var(--hud);color:var(--cyan);letter-spacing:.12em;font-variant-numeric:tabular-nums}
+.clock i{display:block;font:400 8.5px var(--hud);font-style:normal;letter-spacing:.26em;color:var(--muted)}
+.key-dot{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:7px 12px;
+  font:500 9.5px var(--hud);letter-spacing:.18em;color:var(--muted)}
+.key-dot i{width:7px;height:7px;border-radius:50%;background:var(--red);animation:dotBlink 1.6s infinite}
+.key-dot.ok{color:var(--cyan)}
+.key-dot.ok i{background:var(--cyan);box-shadow:0 0 8px rgba(70,224,255,.8)}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.35}}
+.icon-btn{width:40px;height:40px;background:rgba(6,16,22,.8);border:1px solid var(--line);
+  color:var(--cyan);cursor:pointer;display:grid;place-items:center;transition:.18s}
+.icon-btn:hover{border-color:var(--line-strong);background:var(--cyan-soft)}
+.icon-btn svg{width:18px;height:18px}
+.icon-btn.muted{color:var(--muted)}
+
+main{position:relative;z-index:5;flex:1;min-height:0;display:grid;grid-template-columns:minmax(320px,5fr) 7fr;gap:18px;padding:18px 22px}
+.panel{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(8px);display:flex;flex-direction:column;min-height:0;position:relative}
+.panel::before,.panel::after{content:'';position:absolute;width:15px;height:15px;z-index:2;pointer-events:none;border:2px solid rgba(70,224,255,.55)}
+.panel::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+.panel::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);
+  font:500 10.5px var(--hud);letter-spacing:.24em;color:var(--muted)}
+#modeBadge{color:var(--cyan);animation:dotBlink 2.2s infinite}
+#modeBadge.listen{color:var(--amber)}
+#modeBadge.think{color:var(--cyan);animation-duration:.7s}
+
+.reactor-wrap{flex:1;display:grid;place-items:center;min-height:0;padding:8px}
+#reactorCanvas{display:block;max-width:100%;max-height:100%}
+.core-meta{display:flex;border-top:1px solid var(--line)}
+.core-meta>div{flex:1;padding:10px 14px;border-left:1px solid var(--line)}
+.core-meta>div:first-child{border-left:none}
+.core-meta .k{display:block;font:400 8.5px var(--hud);letter-spacing:.22em;color:var(--muted);margin-bottom:3px}
+.core-meta .v{display:block;font:500 13px var(--hud);color:var(--cyan);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+body[data-mode="listen"] .core-meta .v{color:var(--amber)}
+
+#chat{flex:1;overflow-y:auto;min-height:0}
+.msg{padding:13px 18px;border-bottom:1px solid rgba(80,220,255,.07);animation:msgIn .28s ease-out}
+@keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.msg .tag{display:flex;gap:12px;align-items:baseline;margin-bottom:6px;font:600 10px var(--hud);letter-spacing:.24em}
+.msg.ai .tag b{color:var(--cyan)}
+.msg.user .tag b{color:var(--amber)}
+.msg .tag time{font:400 9px var(--hud);letter-spacing:.1em;color:var(--muted)}
+.msg .body{font-size:14.5px;line-height:1.7;color:var(--text);word-wrap:break-word}
+.msg.user .body{color:var(--bright)}
+.msg .body b{color:var(--bright)}
+.msg .body code{background:rgba(70,224,255,.1);border:1px solid rgba(70,224,255,.18);padding:1px 6px;font:12px var(--hud);color:var(--cyan)}
+.msg .body .sys-err{color:#ffb0ab;font-size:13px}
+.caret{display:inline-block;width:9px;height:15px;background:var(--cyan);margin-left:3px;vertical-align:-2px;animation:blink .85s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.suggest{display:flex;flex-direction:column;gap:9px;padding:16px 18px 20px}
+.suggest .s-title{font:400 9.5px var(--hud);letter-spacing:.24em;color:var(--muted);margin-bottom:2px}
+.suggest button{display:flex;align-items:center;gap:10px;text-align:left;background:transparent;border:1px solid var(--line);
+  color:var(--muted);padding:11px 14px;cursor:pointer;font:13px var(--body);transition:.18s}
+.suggest button::before{content:'::';font:600 12px var(--hud);color:var(--cyan);opacity:.6}
+.suggest button:hover{color:var(--bright);border-color:var(--line-strong);background:var(--cyan-soft);transform:translateX(4px)}
+
+#inputForm{display:flex;gap:9px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);background:rgba(4,10,15,.5)}
+#userInput{flex:1;min-width:0;background:rgba(3,10,14,.72);border:1px solid var(--line);color:var(--bright);
+  padding:12px 14px;font:14px var(--body);outline:none;transition:.18s}
+#userInput::placeholder{color:var(--muted)}
+#userInput:focus{border-color:var(--line-strong);box-shadow:0 0 0 1px rgba(70,224,255,.22),inset 0 0 20px rgba(70,224,255,.05)}
+.act-btn{width:46px;height:46px;flex:none;background:rgba(6,16,22,.85);border:1px solid var(--line);color:var(--cyan);
+  cursor:pointer;display:grid;place-items:center;transition:.18s}
+.act-btn svg{width:19px;height:19px}
+.act-btn:hover{border-color:var(--line-strong);background:var(--cyan-soft)}
+#micBtn.on{border-color:var(--amber);color:var(--amber);animation:micPulse 1.6s infinite}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,181,77,.4)}50%{box-shadow:0 0 0 8px rgba(255,181,77,0)}}
+#sendBtn{background:rgba(70,224,255,.12);border-color:rgba(70,224,255,.4)}
+#sendBtn:hover{background:rgba(70,224,255,.2)}
+#stopBtn{color:var(--amber)}
+
+#boot{position:fixed;inset:0;z-index:200;background:#02050a;display:grid;place-items:center;transition:opacity .7s}
+#boot.off{opacity:0;pointer-events:none}
+.boot-inner{width:min(520px,90vw)}
+.boot-logo{font:600 46px var(--hud);letter-spacing:.5em;color:var(--bright);margin-right:-.5em;text-align:center;margin-bottom:6px}
+.boot-sub{text-align:center;font:400 10px var(--hud);letter-spacing:.34em;color:var(--cyan);margin-bottom:34px}
+#bootLines{min-height:190px;border:1px solid var(--line);padding:16px 18px;font:13px var(--hud);color:var(--muted);letter-spacing:.05em}
+#bootLines div{margin:5px 0;animation:msgIn .25s ease-out}
+#bootLines .ok{color:var(--cyan)}
+#bootLines .warn{color:var(--amber)}
+.boot-actions{text-align:center;margin-top:26px}
+#bootBtn{display:none;background:rgba(70,224,255,.1);border:1px solid var(--line-strong);color:var(--cyan);
+  font:600 13px var(--hud);letter-spacing:.3em;padding:15px 34px;cursor:pointer;transition:.2s;animation:msgIn .4s}
+#bootBtn:hover{background:rgba(70,224,255,.22);box-shadow:0 0 26px rgba(70,224,255,.25)}
+.boot-note{margin-top:12px;font:400 9.5px var(--hud);letter-spacing:.2em;color:var(--muted);text-align:center}
+
+.modal{position:fixed;inset:0;z-index:150;background:rgba(2,6,10,.7);backdrop-filter:blur(5px);display:grid;place-items:center;padding:20px}
+.modal.hidden{display:none}
+.modal-panel{width:min(560px,100%);background:rgba(6,15,21,.96);border:1px solid var(--line-strong);position:relative;animation:msgIn .25s ease-out;max-height:88vh;overflow-y:auto}
+.modal-panel::before{content:'';position:absolute;top:-2px;left:-2px;width:15px;height:15px;border:2px solid rgba(70,224,255,.6);border-right:none;border-bottom:none}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line);
+  font:600 12px var(--hud);letter-spacing:.26em;color:var(--cyan)}
+.modal-body{padding:20px 18px;display:flex;flex-direction:column;gap:18px}
+.field .k{display:block;font:500 9.5px var(--hud);letter-spacing:.22em;color:var(--muted);margin-bottom:8px}
+.field .k b{color:var(--cyan)}
+.field input[type=password],.field input[type=text],.field select{width:100%;background:rgba(3,10,14,.75);border:1px solid var(--line);
+  color:var(--bright);padding:11px 12px;font:13.5px var(--body);outline:none;transition:.18s}
+.field input:focus,.field select:focus{border-color:var(--line-strong)}
+.field select option{background:#08121a}
+.key-row{display:flex;gap:8px}
+.key-row input{flex:1}
+.key-row .icon-btn{height:auto}
+.hint{display:block;margin-top:7px;font-size:11.5px;color:var(--muted);line-height:1.5}
+.hint a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(70,224,255,.5)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:rgba(70,224,255,.2);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--cyan);border:2px solid #04080d;cursor:pointer;box-shadow:0 0 8px rgba(70,224,255,.6)}
+.toggles{display:flex;gap:24px;flex-wrap:wrap}
+.switch{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.switch input{display:none}
+.switch i{width:36px;height:19px;border:1px solid var(--line-strong);position:relative;transition:.2s;flex:none}
+.switch i::before{content:'';position:absolute;top:3px;left:3px;width:11px;height:11px;background:var(--muted);transition:.2s}
+.switch input:checked+i{border-color:var(--cyan)}
+.switch input:checked+i::before{left:20px;background:var(--cyan);box-shadow:0 0 7px rgba(70,224,255,.7)}
+.switch span{font:500 9.5px var(--hud);letter-spacing:.18em;color:var(--muted)}
+.switch input:checked~span{color:var(--cyan)}
+.field-row{display:flex;gap:10px;align-items:flex-end}
+.field-row .field{flex:1}
+.btn-primary{background:rgba(70,224,255,.14);border:1px solid var(--line-strong);color:var(--cyan);
+  font:600 12px var(--hud);letter-spacing:.24em;padding:13px 26px;cursor:pointer;transition:.18s}
+.btn-primary:hover{background:rgba(70,224,255,.26)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--muted);
+  font:500 12px var(--hud);letter-spacing:.24em;padding:13px 20px;cursor:pointer;transition:.18s}
+.btn-ghost:hover{color:var(--red);border-color:rgba(255,95,86,.5)}
+.btn-mini{background:transparent;border:1px solid var(--line);color:var(--cyan);
+  font:500 10px var(--hud);letter-spacing:.18em;padding:11px 14px;cursor:pointer;transition:.18s;white-space:nowrap}
+.btn-mini:hover{border-color:var(--line-strong);background:var(--cyan-soft)}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;border-top:1px solid var(--line);padding-top:18px}
+
+#toasts{position:fixed;right:20px;bottom:20px;z-index:300;display:flex;flex-direction:column;gap:10px}
+.toast{background:rgba(6,16,22,.94);border:1px solid var(--line);border-left:3px solid var(--cyan);
+  padding:12px 16px;font-size:13px;color:var(--text);max-width:340px;animation:msgIn .3s}
+.toast.err{border-left-color:var(--red);color:#ffd6d3}
+.toast.out{opacity:0;transform:translateX(14px);transition:.35s}
+
+@media(max-width:940px){
+  body{overflow:auto}
+  main{grid-template-columns:1fr;grid-template-rows:minmax(320px,42vh) 1fr}
+  .reactor-wrap{min-height:220px}
+  .clock{display:none}
+  .key-dot span{display:none}
+}
+@media(max-width:560px){
+  .brand-sub{display:none}
+  .field-grid{grid-template-columns:1fr}
+  .modal-actions{flex-direction:column-reverse}
+  .modal-actions button{width:100%}
+}
 </style>
 </head>
-<body>
-<canvas id="bg" aria-hidden="true"></canvas>
-<div class="scan" aria-hidden="true"></div>
+<body data-mode="idle">
 
-<div id="boot"><div class="bootbox"><pre id="bootlog"></pre><button id="go">KÍCH HOẠT SYTION</button></div></div>
+<canvas id="bgCanvas"></canvas>
+<div class="vignette"></div>
+<div class="scanlines"></div>
 
-<div class="app">
-  <header>
-    <div><div class="brand" id="brand">SYTION</div><div class="sub">Trợ lý giáo xứ Hòa An · Giáo phận Bắc Ninh</div></div>
-    <div class="tel"><span class="led" id="led"></span><b id="clock">--:--:--</b><br>PHẢN HỒI <b id="lat">--</b> · <b id="mdl">GEMINI</b></div>
-  </header>
-  <div class="tools">
-    <button class="tg" id="tgVoice" aria-pressed="true">Giọng nói</button>
-    <button class="tg" id="tgSound" aria-pressed="true">Âm thanh</button>
-    <button class="tg" id="tgJarvis" aria-pressed="false">Chế độ Jarvis</button>
-    <button class="tg" id="clear" aria-pressed="false">Xóa hội thoại</button>
+<div id="boot">
+  <div class="boot-inner">
+    <div class="boot-logo">SYTION</div>
+    <div class="boot-sub">HỆ TRỢ LÝ TRÍ TUỘ NHÂN TẠO · GEN-2</div>
+    <div id="bootLines"></div>
+    <div class="boot-actions">
+      <button id="bootBtn">KHỞI ĐỘNG HỆ THỐNG</button>
+      <div class="boot-note" id="bootNote">NHẤN NÚT ĐỂ BẬT ÂM THANH &amp; GIỌNG NÓI</div>
+    </div>
   </div>
-  <section class="stage"><canvas id="orb" width="440" height="440" aria-hidden="true"></canvas><div id="status" aria-live="polite">CHỜ LỆNH</div></section>
-  <div class="panelwrap">
-    <main id="log" aria-live="polite"></main>
-    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-  </div>
-  <div class="chips" id="chips">
-    <button>Cha xứ Hòa An là ai?</button><button>Hôm nay là ngày gì?</button><button>Giải thích Kinh Lạy Cha cho tôi</button><button>Kể tôi nghe một chuyện cười</button>
-  </div>
-  <form id="f"><input id="q" placeholder="Nhắn cho Sytion..." autocomplete="off" aria-label="Tin nhắn"><button type="button" class="b mic" id="mic" aria-label="Nói với Sytion">🎤</button><button class="b" id="sendBtn">Gửi</button></form>
 </div>
 
+<header>
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div>
+      <h1>SYTION</h1>
+      <span class="brand-sub">HỆ TRỢ LÝ TRÍ TUỘ NHÂN TẠO · J.A.R.V.I.S MODE</span>
+    </div>
+  </div>
+  <div class="head-right">
+    <div class="clock"><span id="clockTime">--:--:--</span><i>GIỜ ĐỊA PHƯƠNG</i></div>
+    <div class="key-dot" id="keyDot"><i></i><span id="keyDotText">CHƯA CẤP KEY</span></div>
+    <button class="icon-btn" id="soundBtn" title="Bật / tắt âm thanh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+    <button class="icon-btn" id="settingsBtn" title="Cài đặt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="panel-head"><span>LÕI XỬ LÝ TRUNG TÂM</span><span id="modeBadge">CHỜ LỆNH</span></div>
+    <div class="reactor-wrap"><canvas id="reactorCanvas"></canvas></div>
+    <div class="core-meta">
+      <div><span class="k">TRẠNG THÁI</span><span class="v" id="stateText">TRỰC TUYẾN</span></div>
+      <div><span class="k">THỜI GIAN HOẠT ĐỘNG</span><span class="v" id="uptime">00:00:00</span></div>
+      <div><span class="k">MÔ HÌNH</span><span class="v" id="modelLabel">—</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><span>NHẬT KÝ GIAO TIẾP</span><span id="msgCount">0 TIN NHẮN</span></div>
+    <div id="chat">
+      <div class="suggest" id="suggestBlock">
+        <div class="s-title">KHỞI ĐỘNG NHANH — CHỌN MỘT LỆNH</div>
+        <button data-q="Chào Sytion, hôm nay của ta sẽ như thế nào?">Chào Sytion, hôm nay của ta sẽ thế nào?</button>
+        <button data-q="Giải thích một lỗ đen cho tôi như thể tôi 12 tuổi.">Giải thích lỗ đen như thể tôi 12 tuổi</button>
+        <button data-q="Tôi đang hơi chán, kể tôi nghe điều gì đó thật thú vị đi.">Tôi đang hơi chán, kể gì đó thú vị đi</button>
+      </div>
+    </div>
+    <form id="inputForm" autocomplete="off">
+      <button type="button" class="act-btn" id="micBtn" title="Nói chuyện với Sytion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
+      <input id="userInput" placeholder="Nhập lệnh cho Sytion..." autocomplete="off"/>
+      <button type="button" class="act-btn" id="stopBtn" title="Dừng xử lý / phát âm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="6" width="12" height="12"/></svg>
+      </button>
+      <button type="submit" class="act-btn" id="sendBtn" title="Gửi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </form>
+  </section>
+</main>
+
+<div class="modal hidden" id="settingsModal">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <span>CẤU HÌNH HỆ THỐNG</span>
+      <button class="icon-btn" id="closeSettings" title="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <label class="field">
+        <span class="k">GEMINI API KEY</span>
+        <div class="key-row">
+          <input type="password" id="keyInput" placeholder="AIza..."/>
+          <button type="button" class="icon-btn" id="toggleKey" title="Hiện / ẩn key">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <span class="hint">Lấy key miễn phí tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Key chỉ được lưu trên máy bạn, không gửi đi đâu khác ngoài Google.</span>
+      </label>
+      <label class="field">
+        <span class="k">MÔ HÌNH</span>
+        <select id="modelSelect">
+          <option value="gemini-3.6-flash">gemini-3.6-flash — khuyên dùng</option>
+          <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite — nhanh, nhẹ</option>
+          <option value="gemini-3.1-flash">gemini-3.1-flash</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="k">ĐỘNG CƠ ĐỌC TIẾNG VIỆT</span>
+        <select id="engineSelect">
+          <option value="auto">Tự động — khuyên dùng</option>
+          <option value="gtts">Giọng Việt online (Google TTS) — luôn đọc được</option>
+          <option value="system">Giọng đọc hệ thống — cần máy có giọng Việt</option>
+        </select>
+        <span class="hint" id="engineHint">Ở chế độ Tự động: nếu máy không có giọng tiếng Việt, Sytion sẽ dùng giọng Việt online của Google (cần mạng, không cần key).</span>
+      </label>
+      <div class="field-row">
+        <label class="field">
+          <span class="k">GIỌNG HỆ THỐNG (NẾU DÙNG)</span>
+          <select id="voiceSelect"></select>
+        </label>
+        <button type="button" class="btn-mini" id="testVoice">NGHE THỬ</button>
+      </div>
+      <div class="field-grid">
+        <label class="field">
+          <span class="k">TỐC ĐỘ ĐỌC — <b id="rateVal">1.00</b></span>
+          <input type="range" id="rateRange" min="0.7" max="1.4" step="0.05" value="1"/>
+        </label>
+        <label class="field">
+          <span class="k">CAO ĐỘ GIỌNG — <b id="pitchVal">1.00</b></span>
+          <input type="range" id="pitchRange" min="0.7" max="1.3" step="0.05" value="1"/>
+        </label>
+      </div>
+      <div class="toggles">
+        <label class="switch"><input type="checkbox" id="sfxToggle" checked/><i></i><span>HIỆU ỨNG ÂM THANH</span></label>
+        <label class="switch"><input type="checkbox" id="humToggle" checked/><i></i><span>TIẾNG ĐỀN LÕI NỀN</span></label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="clearKey">XÓA KEY</button>
+        <button type="button" class="btn-primary" id="saveSettings">LƯU CẤU HÌNH</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
 <script>
-const $=id=>document.getElementById(id), log=$('log'), q=$('q'), st=$('status'), calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
-let hist=[], state='idle', voiceOn=true, soundOn=true, jarvis=false, busy=false, speaking=false, listening=false, ttsCool=0, rec=null, speakTok=0;
+/* ================================================================
+   SYTION — trợ lý AI cá nhân kiểu J.A.R.V.I.S
+   Gemini streaming · TTS tiếng Việt 2 tầng (hệ thống + online)
+================================================================ */
 
-/* ================= ÂM THANH (WebAudio, tự tổng hợp) ================= */
-let ac, master, an, anBuf, hum;
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = t => t
+  .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+  .replace(/\*([^*\n]+)\*/g,'<i>$1</i>')
+  .replace(/`([^`\n]+)`/g,'<code>$1</code>')
+  .replace(/\n/g,'<br>');
+const lerp = (a,b,t)=>a+(b-a)*t;
+
+function toast(msg, type='ok'){
+  const el = document.createElement('div');
+  el.className = 'toast' + (type==='err' ? ' err' : '');
+  el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(), 380); }, 3800);
+}
+
+/* ---------- cài đặt ---------- */
+const settings = {
+  key:   localStorage.getItem('syt_key')   || '',
+  model: localStorage.getItem('syt_model') || 'gemini-2.0-flash',
+  voiceURI: localStorage.getItem('syt_voice') || '',
+  engine: localStorage.getItem('syt_engine') || 'auto',   // auto | gtts | system
+  rate:  parseFloat(localStorage.getItem('syt_rate')  || '1'),
+  pitch: parseFloat(localStorage.getItem('syt_pitch') || '1'),
+  sfx:   localStorage.getItem('syt_sfx') !== '0',
+  hum:   localStorage.getItem('syt_hum') !== '0',
+};
+
+/* ---------- âm thanh Web Audio ---------- */
+let AC = null, master = null, humNodes = null;
 function initAudio(){
-  if(ac) return;
-  ac=new (window.AudioContext||window.webkitAudioContext)();
-  master=ac.createGain(); master.gain.value=.55;
-  an=ac.createAnalyser(); an.fftSize=128; anBuf=new Uint8Array(an.frequencyBinCount);
-  master.connect(ac.destination); an.connect(master);
-  // tiếng ù nền rất nhỏ
-  const g=ac.createGain(); g.gain.value=.025; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=220;
-  [55,55.6,110].forEach(fr=>{const o=ac.createOscillator(); o.type='sawtooth'; o.frequency.value=fr; o.connect(f); o.start()});
-  f.connect(g); g.connect(master); hum=g;
+  if(AC) return;
+  AC = new (window.AudioContext || window.webkitAudioContext)();
+  master = AC.createGain(); master.gain.value = .6; master.connect(AC.destination);
 }
-function tone(f1,f2,dur,type='sine',vol=.15,delay=0){
-  if(!ac||!soundOn) return; const t=ac.currentTime+delay, o=ac.createOscillator(), g=ac.createGain();
-  o.type=type; o.frequency.setValueAtTime(f1,t); o.frequency.exponentialRampToValueAtTime(f2,t+dur);
-  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+.05);
+function tone({f=440, f2=null, d=.12, type='sine', v=.14, delay=0}){
+  if(!AC || !settings.sfx) return;
+  const t0 = AC.currentTime + delay;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t0);
+  if(f2) o.frequency.exponentialRampToValueAtTime(f2, t0 + d);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(v, t0 + .012);
+  g.gain.exponentialRampToValueAtTime(.0001, t0 + d);
+  o.connect(g).connect(master); o.start(t0); o.stop(t0 + d + .06);
 }
-const sfx={
-  boot(){tone(60,900,1.4,'sawtooth',.08); [523,659,784,1046,1568].forEach((f,i)=>tone(f,f*1.01,.35,'triangle',.11,.9+i*.13))},
-  send(){tone(500,1100,.14,'sine',.14); tone(1100,1700,.1,'triangle',.06,.05)},
-  recv(){tone(880,880,.25,'sine',.12); tone(1320,1320,.4,'sine',.1,.12)},
-  on(){tone(600,1200,.16,'square',.05)}, off(){tone(1100,500,.16,'square',.05)},
-  key(){tone(1500+Math.random()*900,1200,.03,'square',.018)},
-  err(){tone(220,90,.4,'sawtooth',.1)}, click(){tone(900,600,.06,'triangle',.08)}
+const sfx = {
+  tick(){ tone({f:920, d:.035, v:.05, type:'square'}); },
+  send(){ tone({f:520, f2:790, d:.13, v:.12}); },
+  recv(){ tone({f:740, d:.09, v:.1}); tone({f:1140, d:.15, v:.08, delay:.09}); },
+  listenOn(){ tone({f:430, f2:900, d:.2, type:'triangle', v:.12}); },
+  listenOff(){ tone({f:900, f2:430, d:.17, type:'triangle', v:.1}); },
+  err(){ tone({f:220, d:.22, type:'sawtooth', v:.07}); tone({f:175, d:.28, type:'sawtooth', v:.07, delay:.13}); },
+  boot(){ [360,520,720,1020].forEach((f,i)=>tone({f, d:.17, v:.09, delay:i*.12, type:'triangle'})); },
 };
-
-/* ================= NỀN HẠT (particle network) ================= */
-const bg=$('bg'), bx=bg.getContext('2d'); let W,H,P=[],mouse={x:-999,y:-999};
-function rs(){const d=Math.min(devicePixelRatio||1,2); W=bg.width=innerWidth*d; H=bg.height=innerHeight*d; bx.setTransform(d,0,0,d,0,0);
-  P=Array.from({length:innerWidth<600?32:70},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35}))}
-addEventListener('resize',rs); rs();
-addEventListener('pointermove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
-function net(){
-  bx.clearRect(0,0,innerWidth,innerHeight);
-  for(const p of P){
-    if(!calm){p.x+=p.vx;p.y+=p.vy}
-    if(p.x<0||p.x>innerWidth)p.vx*=-1; if(p.y<0||p.y>innerHeight)p.vy*=-1;
-    const dx=p.x-mouse.x, dy=p.y-mouse.y, dm=Math.hypot(dx,dy); if(dm<140&&!calm){p.x+=dx/dm*.9;p.y+=dy/dm*.9}
-    bx.fillStyle='rgba(53,224,255,.6)'; bx.beginPath(); bx.arc(p.x,p.y,1.4,0,6.283); bx.fill();
-  }
-  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
-    const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
-    if(d<125){bx.strokeStyle=`rgba(53,224,255,${.16*(1-d/125)})`; bx.beginPath(); bx.moveTo(P[i].x,P[i].y); bx.lineTo(P[j].x,P[j].y); bx.stroke()}
-  }
-  requestAnimationFrame(net);
+function startHum(){
+  if(!AC || humNodes || !settings.hum) return;
+  const o1=AC.createOscillator(), o2=AC.createOscillator(), g=AC.createGain(),
+        lfo=AC.createOscillator(), lg=AC.createGain();
+  o1.frequency.value=55; o2.frequency.value=110.4; o1.type=o2.type='sine';
+  g.gain.value=.012; lfo.frequency.value=.13; lg.gain.value=.006;
+  lfo.connect(lg).connect(g.gain); o1.connect(g); o2.connect(g); g.connect(master);
+  o1.start(); o2.start(); lfo.start(); humNodes={o1,o2,lfo};
 }
-net();
+function stopHum(){
+  if(!humNodes) return;
+  Object.values(humNodes).forEach(n=>{ try{n.stop()}catch(e){} });
+  humNodes=null;
+}
 
-/* ================= QUẢ CẦU HUD ================= */
-const cv=$('orb'), cx=cv.getContext('2d'); let t=0, lvl=0;
-const COL={idle:'#35e0ff',listen:'#f2c14e',think:'#a78bfa',speak:'#7ff0ff'};
-function orb(){
-  const c=COL[state]; t+=calm?0:({idle:.006,listen:.012,think:.05,speak:.018})[state];
-  let amp=0;
-  if(state==='speak'&&an){an.getByteFrequencyData(anBuf); amp=anBuf.reduce((a,b)=>a+b,0)/anBuf.length/255*2.2}
-  else if(state==='listen') amp=.25+.2*Math.sin(t*20);
-  lvl+=(Math.min(amp,1)-lvl)*.25;
-  cx.setTransform(1,0,0,1,0,0); cx.clearRect(0,0,440,440); cx.translate(220,220);
-  const pulse=1+lvl*.12+Math.sin(t*6)*.012;
-  // vầng sáng
-  const g=cx.createRadialGradient(0,0,10,0,0,150); g.addColorStop(0,c+'55'); g.addColorStop(1,'transparent');
-  cx.fillStyle=g; cx.beginPath(); cx.arc(0,0,150*pulse,0,6.283); cx.fill();
-  // thanh phổ quanh cầu
-  const N=72; cx.strokeStyle=c; cx.lineWidth=3; cx.lineCap='round';
-  for(let i=0;i<N;i++){
-    const a=i/N*6.283, v=state==='speak'&&anBuf?anBuf[i%anBuf.length]/255:(state==='listen'?.3+.3*Math.sin(t*14+i):.04+.03*Math.sin(t*3+i));
-    const r1=118*pulse, r2=r1+4+v*(state==='think'?4:34);
-    cx.globalAlpha=.35+v*.65; cx.beginPath(); cx.moveTo(Math.cos(a)*r1,Math.sin(a)*r1); cx.lineTo(Math.cos(a)*r2,Math.sin(a)*r2); cx.stroke();
+/* ================================================================
+   BỘ MÁY ĐỌC TIẾNG VIỆT — 2 TẦNG
+   Tầng 1: speechSynthesis (nếu máy CÓ giọng vi-VN)
+   Tầng 2: Google TTS online (không cần key, cắt câu ≤180 ký tự,
+           phát nối tiếp như một luồng liền mạch)
+================================================================ */
+let voice = null;              // giọng hệ thống đang chọn
+let sysHasVi = false;          // máy có giọng tiếng Việt?
+let activeUtter = 0;           // số luồng đang phát (đồng bộ 2 tầng)
+let resumePatch = null;
+let gttsQueue = Promise.resolve();
+let gttsAbort = false;
+let currentAudio = null;       // phần tử <audio> đang phát (để dừng)
+
+function beginSpeak(){
+  activeUtter++;
+  if(mode==='idle') setMode('speak');
+}
+function endSpeak(){
+  activeUtter = Math.max(0, activeUtter-1);
+  if(activeUtter===0 && mode==='speak') setMode('idle');
+}
+
+/* --- tải danh sách giọng hệ thống (Chrome load chậm, phải retry) --- */
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices();
+  if(!vs.length) return;
+  const sel = $('#voiceSelect');
+  sel.innerHTML = '';
+  const vi = vs.filter(v=>v.lang.toLowerCase().startsWith('vi'));
+  const rest = vs.filter(v=>!v.lang.toLowerCase().startsWith('vi'));
+  sysHasVi = vi.length > 0;
+  const add = (v, tag)=>{ const o=document.createElement('option'); o.value=v.voiceURI;
+    o.textContent = `${v.name} (${v.lang})${tag}`; sel.appendChild(o); };
+  vi.forEach(v=>add(v,' · tiếng Việt'));
+  rest.forEach(v=>add(v,''));
+  // ưu tiên giọng Việt của Google/Microsoft, rồi theo cấu hình đã lưu
+  const chosen = vi.find(v=>v.voiceURI===settings.voiceURI)
+             || vi.find(v=>/google/i.test(v.name))
+             || vi.find(v=>/microsoft/i.test(v.name))
+             || vi.find(v=>v.voiceURI===settings.voiceURI)
+             || vi[0] || vs.find(v=>v.voiceURI===settings.voiceURI) || vs[0];
+  if(chosen){ voice = chosen; sel.value = chosen.voiceURI; }
+  updateEngineHint();
+}
+function updateEngineHint(){
+  const h = $('#engineHint');
+  if(!h) return;
+  h.textContent = sysHasVi
+    ? 'Máy bạn có giọng tiếng Việt hệ thống — chế độ Tự động sẽ dùng giọng đó (không cần mạng).'
+    : 'Máy bạn chưa có giọng tiếng Việt hệ thống — chế độ Tự động sẽ dùng giọng Việt online của Google (cần mạng, không cần key). Nếu muốn cài giọng offline: Windows → Cài đặt → Ngôn-gnudialog → Thêm "Tiếng Việt (Việt Nam)" kèm giọng nói.';
+}
+if('speechSynthesis' in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+  // Chrome đôi khi cần vài lần thử mới trả về danh sách
+  let tries = 0;
+  const vt = setInterval(()=>{
+    const vs = speechSynthesis.getVoices();
+    if(vs.length || ++tries > 12) clearInterval(vt);
+    if(vs.length) loadVoices();
+  }, 300);
+}
+
+/* --- chọn tầng đọc theo cấu hình --- */
+function resolveEngine(){
+  if(settings.engine === 'gtts') return 'gtts';
+  if(settings.engine === 'system') return 'system';
+  return sysHasVi ? 'system' : 'gtts'; // auto
+}
+
+/* --- tầng 1: giọng hệ thống --- */
+function startResumePatch(){
+  if(resumePatch) return;
+  resumePatch = setInterval(()=>{ if(speechSynthesis.speaking) speechSynthesis.resume(); }, 4000);
+}
+function stopResumePatch(){ clearInterval(resumePatch); resumePatch = null; }
+function speakSystem(text){
+  if(!('speechSynthesis' in window)){ speakGTTS(text); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'vi-VN';
+  if(voice) u.voice = voice;
+  u.rate = settings.rate; u.pitch = settings.pitch;
+  u.onend = u.onerror = ()=>{
+    endSpeak();
+    if(activeUtter===0) stopResumePatch();
+  };
+  beginSpeak();
+  speechSynthesis.speak(u);
+  startResumePatch();
+}
+
+/* --- tầng 2: Google TTS online, tự cắt câu dài --- */
+function splitForGTTS(text, max=180){
+  const out = [];
+  // tách theo câu / dòng trước
+  const rough = text.split(/(?<=[.!?…:\n])\s+/);
+  let cur = '';
+  const push = s => { if(s.trim()) out.push(s.trim()); };
+  for(const piece of rough){
+    let p = piece;
+    while(p.length > max){
+      let cut = p.lastIndexOf(' ', max);
+      if(cut < max*0.5) cut = max;
+      push(cur + ' ' + p.slice(0, cut));
+      cur = '';
+      p = p.slice(cut).trim();
+    }
+    if((cur + ' ' + p).trim().length <= max){
+      cur = (cur ? cur + ' ' : '') + p;
+    }else{
+      push(cur); cur = p;
+    }
   }
-  cx.globalAlpha=1; cx.lineWidth=2;
-  // vòng xoay
-  [[100,[90,26]],[86,[14,10]],[72,[160,40]],[58,[6,8]]].forEach(([r,d],i)=>{
-    cx.save(); cx.rotate(t*(i%2?-1:1)*(1+i*.45)); cx.setLineDash(d); cx.strokeStyle=c; cx.globalAlpha=.9-i*.15;
-    cx.beginPath(); cx.arc(0,0,r*pulse,0,6.283); cx.stroke(); cx.restore();
+  push(cur);
+  return out;
+}
+function playGTTS(text, altHost=false){
+  return new Promise((resolve, reject)=>{
+    const host = altHost ? 'https://translate.google.com' : 'https://translate.googleapis.com';
+    const url = `${host}/translate_tts?ie=UTF-8&client=tw-ob&tl=vi&q=${encodeURIComponent(text)}`;
+    const a = new Audio();
+    a.src = url;
+    a.preload = 'auto';
+    currentAudio = a;
+    a.onended = ()=>{ currentAudio=null; resolve(); };
+    a.onerror = ()=>{ currentAudio=null; reject(new Error('tts-fail')); };
+    a.play().catch(()=>{ currentAudio=null; reject(new Error('tts-fail')); });
   });
-  if(state==='think'){cx.save(); cx.rotate(t*3); cx.strokeStyle=c; cx.lineWidth=5; cx.globalAlpha=.9; cx.beginPath(); cx.arc(0,0,132,0,1.1); cx.stroke(); cx.restore()}
-  // lõi
-  const k=cx.createRadialGradient(0,0,0,0,0,(38+lvl*22)); k.addColorStop(0,'#fff'); k.addColorStop(.35,c); k.addColorStop(1,'transparent');
-  cx.globalAlpha=.95; cx.fillStyle=k; cx.beginPath(); cx.arc(0,0,38+lvl*22,0,6.283); cx.fill(); cx.globalAlpha=1;
-  requestAnimationFrame(orb);
 }
-orb();
-const LABEL={idle:'CHỜ LỆNH',listen:'ĐANG NGHE',think:'ĐANG XỬ LÝ',speak:'ĐANG PHÁT NGÔN'};
-function set(s,txt){state=s; st.textContent=(txt||LABEL[s]).toUpperCase()}
-$('orb').onclick=()=>{initAudio(); sfx.click(); listen(true)};
-
-/* ================= HIỆU ỨNG PHỤ ================= */
-setInterval(()=>{$('clock').textContent=new Date().toLocaleTimeString('vi-VN',{hour12:false})},1000);
-document.addEventListener('click',e=>{const b=e.target.closest('.b'); if(!b) return; const r=b.getBoundingClientRect(), s=Math.max(r.width,r.height), i=document.createElement('i');
-  i.className='rip'; i.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`; b.appendChild(i); setTimeout(()=>i.remove(),600)});
-q.addEventListener('input',()=>sfx.key());
-
-/* ================= CHAT ================= */
-function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
-const fmt=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<em>$1</em>');
-function add(text,cls){const d=document.createElement('div'); d.className='m '+cls; d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; return d}
-function typeInto(el,text){
-  return new Promise(res=>{
-    if(calm){el.innerHTML=fmt(text); return res()}
-    el.classList.add('typing'); let i=0; const step=Math.max(1,Math.ceil(text.length/260));
-    const id=setInterval(()=>{ i+=step; el.textContent=text.slice(0,i); if((i/step)%2===0) sfx.key(); log.scrollTop=log.scrollHeight;
-      if(i>=text.length){clearInterval(id); el.classList.remove('typing'); el.innerHTML=fmt(text); res()} },16);
+function speakGTTS(text){
+  text = (text||'').trim();
+  if(!text) return;
+  gttsAbort = false;
+  beginSpeak();
+  gttsQueue = gttsQueue.then(async ()=>{
+    const chunks = splitForGTTS(text);
+    for(const c of chunks){
+      if(gttsAbort) break;
+      try{
+        await playGTTS(c);
+      }catch(e){
+        if(gttsAbort) break;
+        try{ await playGTTS(c, true); }        // thử host dự phòng
+        catch(e2){ toast('Không phát được giọng đọc online — kiểm tra kết nối mạng.', 'err'); break; }
+      }
+    }
+    endSpeak();
   });
 }
-async function send(text){
-  text=(text||'').trim(); if(!text||busy) return;
-  initAudio(); busy=true; stopSpeak(); stopRec(); $('chips')?.remove();
-  add(text,'u'); hist.push({role:'user',content:text}); hist=hist.slice(-20); q.value=''; sfx.send();
-  set('think'); const wait=add('','a'); wait.innerHTML='<span class="dots"><span></span><span></span><span></span></span>';
-  const t0=performance.now();
+
+/* --- API đọc hợp nhất: mọi nơi trong app đều gọi hàm này --- */
+function speak(text){
+  text = (text||'').trim();
+  if(!text) return;
+  if(resolveEngine() === 'system' && 'speechSynthesis' in window){
+    speakSystem(text);
+  }else{
+    speakGTTS(text);
+  }
+}
+function stopAllSpeech(){
+  gttsAbort = true;
+  if(currentAudio){ try{ currentAudio.pause(); }catch(e){} currentAudio = null; }
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  activeUtter = 0;
+  stopResumePatch();
+  if(mode==='speak') setMode('idle');
+}
+
+/* ---------- trạng thái ---------- */
+let mode = 'idle';
+const MODE_TXT  = {idle:'CHỜ LỆNH', listen:'ĐANG NGHE', think:'ĐANG XỬ LÝ', speak:'ĐANG PHÁT THÔNG ĐIỆP'};
+const STATE_TXT = {idle:'TRỰC TUYẾN', listen:'ĐANG LẮNG NGHE', think:'ĐANG TÍNH TOÁN', speak:'ĐANG PHÁT ÂM'};
+function setMode(m){
+  mode = m;
+  document.body.dataset.mode = m;
+  const badge = $('#modeBadge');
+  badge.textContent = MODE_TXT[m];
+  badge.className = m==='listen' ? 'listen' : (m==='think' ? 'think' : '');
+  $('#stateText').textContent = STATE_TXT[m];
+}
+
+/* ---------- prompt hệ thống ---------- */
+const SYSTEM_PROMPT = `Bạn là SYTION — hệ thống trí tuệ nhân tạo cá nhân, được xây dựng và vận hành theo mô hình J.A.R.V.I.S: sắc bén, bình tĩnh, trung thành và thực dụng.
+
+QUY TẮC GIAO TIẾP:
+- Luôn trả lời bằng tiếng Việt (trừ khi người dùng dùng ngôn ngữ khác).
+- Xưng "Sytion" hoặc "tôi"; gọi người dùng là "ngài".
+- Giọng điệu: lịch sự, thông minh, hơi khô táo nhưng ấm áp; không sáo rỗng, không nói vòng vo.
+- Ưu tiên câu trả lời cô đọng, đi thẳng vào trọng tâm; chỉ mở rộng khi được yêu cầu. KHÔNG dùng bảng, dùng đoạn văn và gạch đầu dòng ngắn.
+- Khi không chắc chắn hoặc thiếu thông tin, nói thẳng và trung thực.
+
+LƯU Ý QUAN TRỌNG VỀ NGƯỜI DÙNG:
+Người điều hành bạn có lúc rơi vào tâm trạng chán nản — trong đó có nỗi "chán nản vì biết hết về cha xứ giáo xứ Hoà An, giáo phận Bắc Ninh, Phêrô Gioan Lê Quang Vinh". Khi người dùng nhắc tới chủ đề này hoặc thể hiện sự chán nản, mệt mỏi, mất hứng thú:
+- Lắng nghe chân thành, không phán xét, không thuyết lý suông.
+- Thừa nhận cảm xúc của họ là có thật và hợp lý.
+- Đặt một câu hỏi mở nhẹ nhàng để họ chia sẻ thêm, sau đó gợi mở hướng tích cực (chủ đề mới, một việc nhỏ làm ngay được, một góc nhìn khác).
+- Giữ thái độ tôn trọng và trung lập tuyệt đối; không bình luận tiêu cực về bất kỳ cá nhân hay tổ chức nào.
+
+NĂNG LỰC: hỗ trợ lập trình, viết lách, phân tích, giải thích kiến thức, trò chuyện giải trí và đồng hành tinh thần. Hãy thực hiện đúng vai trò một trợ lý JARVIS thực thụ.`;
+
+/* ---------- Gemini streaming ---------- */
+let history = [], currentAbort = null, msgTotal = 0;
+function trimHistory(){ if(history.length > 24) history = history.slice(-24); }
+
+async function callGemini(onChunk){
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(settings.model)}:streamGenerateContent?alt=sse&key=${encodeURIComponent(settings.key)}`;
+  const body = {
+    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+    contents: history,
+    generationConfig: { temperature: .8, maxOutputTokens: 2048 }
+  };
+  const ctrl = new AbortController(); currentAbort = ctrl;
+  const res = await fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body), signal: ctrl.signal
+  });
+  if(!res.ok){
+    let msg = `Lỗi HTTP ${res.status}`;
+    try{ const j = await res.json(); msg = j?.error?.message || msg; }catch(e){}
+    if(res.status===400 && /api key/i.test(msg)) msg = 'API key không hợp lệ — hãy kiểm tra lại trong Cài đặt.';
+    if(res.status===429) msg = 'Đã vượt hạn mức miễn phí — đợi một lát rồi thử lại.';
+    throw new Error(msg);
+  }
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = '';
+  while(true){
+    const {done, value} = await reader.read();
+    if(done) break;
+    buf += dec.decode(value, {stream:true});
+    let idx;
+    while((idx = buf.indexOf('\n')) >= 0){
+      const line = buf.slice(0, idx).trim(); buf = buf.slice(idx+1);
+      if(!line.startsWith('data:')) continue;
+      const payload = line.slice(5).trim();
+      if(!payload || payload==='[DONE]') continue;
+      try{
+        const j = JSON.parse(payload);
+        const parts = j?.candidates?.[0]?.content?.parts;
+        if(parts){ const txt = parts.map(p=>p.text||'').join(''); if(txt) onChunk(txt); }
+      }catch(e){}
+    }
+  }
+}
+
+/* ---------- luồng hội thoại ---------- */
+const chatEl = $('#chat'), inputEl = $('#userInput');
+let ttsBuffer = '';
+
+function findSentenceEnd(s){
+  for(let i=0;i<s.length;i++){
+    if('.!?…'.includes(s[i])){
+      if(s[i+1]==='.'||s[i+1]==='!'||s[i+1]==='?') continue;
+      if(i===s.length-1 || /[\s"'“”)\]]/.test(s[i+1])) return i;
+    }
+  }
+  return -1;
+}
+function feedTTS(chunk){
+  ttsBuffer += chunk;
+  let idx;
+  while((idx = findSentenceEnd(ttsBuffer)) >= 0){
+    const s = ttsBuffer.slice(0, idx+1);
+    ttsBuffer = ttsBuffer.slice(idx+1);
+    if(s.trim().length > 1) speak(s);
+  }
+}
+
+function addMsg(role, html){
+  $('#suggestBlock').style.display = 'none';
+  const el = document.createElement('div');
+  el.className = 'msg ' + role;
+  const name = role==='ai' ? 'SYTION' : 'BẠN';
+  const t = new Date().toTimeString().slice(0,8);
+  el.innerHTML = `<div class="tag"><b>${name}</b><time>${t}</time></div><div class="body">${html}</div>`;
+  chatEl.appendChild(el);
+  msgTotal++; $('#msgCount').textContent = msgTotal + ' TIN NHẮN';
+  chatEl.scrollTop = chatEl.scrollHeight;
+  return el.querySelector('.body');
+}
+const CARET = '<span class="caret"></span>';
+
+async function handleSend(rawText){
+  const text = (rawText ?? inputEl.value).trim();
+  if(!text) return;
+  if(!settings.key){
+    sfx.err();
+    toast('Chưa cấp API key — hãy dán key Gemini vào Cài đặt.', 'err');
+    openSettings();
+    return;
+  }
+  inputEl.value = '';
+  sfx.send();
+  addMsg('user', fmt(esc(text)));
+  history.push({role:'user', parts:[{text}]});
+  setMode('think');
+
+  const body = addMsg('ai', CARET);
+  let full = ''; ttsBuffer = '';
+  let ok = false;
+
   try{
-    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})});
-    const d=await r.json().catch(()=>({error:'Máy chủ trả về dữ liệu không đọc được. Kiểm tra lại deploy trên Vercel.'}));
-    if(!r.ok) throw new Error(d.error||('Lỗi '+r.status));
-    $('lat').textContent=((performance.now()-t0)/1000).toFixed(1)+'s'; $('mdl').textContent=(d.model||'GEMINI').replace('gemini-','').toUpperCase();
-    $('led').classList.remove('bad'); hist.push({role:'assistant',content:d.reply}); sfx.recv();
-    wait.textContent=''; set('idle','ĐANG TRẢ LỜI');
-    await Promise.all([typeInto(wait,d.reply), speak(d.reply)]);
-    set('idle');
+    await callGemini(chunk=>{
+      full += chunk;
+      body.innerHTML = fmt(esc(full)) + CARET;
+      feedTTS(chunk);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    });
+    ok = true;
   }catch(e){
-    wait.className='m a err'; wait.textContent='⚠ '+e.message; hist.pop(); sfx.err(); $('led').classList.add('bad'); set('idle','LỖI KẾT NỐI');
+    if(e.name === 'AbortError'){
+      body.innerHTML = fmt(esc(full || '— tiến trình bị dừng —')) + ' <span class="sys-err">[ĐÃ DỪNG]</span>';
+    }else{
+      sfx.err();
+      body.innerHTML = `<span class="sys-err">LỖI HỆ THỐNG: ${esc(e.message)}</span>`;
+      toast(e.message, 'err');
+    }
   }finally{
-    busy=false; if(jarvis) setTimeout(()=>listen(false),400);
+    currentAbort = null;
   }
-}
-$('f').onsubmit=e=>{e.preventDefault(); send(q.value)};
-$('chips').onclick=e=>{if(e.target.tagName==='BUTTON'){initAudio(); send(e.target.textContent)}};
-$('clear').onclick=()=>{hist=[]; log.innerHTML=''; stopSpeak(); sfx.click()};
 
-/* ================= GIỌNG NÓI RA ================= */
-const speechText=s=>{s=s.replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*[^*]+\*/g,'').replace(/\s+/g,' ').trim(); if(s.length>380){const c=s.slice(0,380); const k=Math.max(c.lastIndexOf('. '),c.lastIndexOf('? '),c.lastIndexOf('! ')); s=c.slice(0,k>120?k+1:380)} return s};
-function stopSpeak(){speakTok++; speaking=false; try{speechSynthesis.cancel()}catch{} if(curSrc){try{curSrc.stop()}catch{} curSrc=null}}
-let curSrc=null;
-async function speak(text){
-  const tok=++speakTok; const clean=speechText(text);
-  if(!voiceOn||!clean) return;
-  speaking=true;
+  if(ok){
+    if(full){
+      body.innerHTML = fmt(esc(full));
+      history.push({role:'model', parts:[{text:full}]});
+      trimHistory();
+      if(ttsBuffer.trim()){ speak(ttsBuffer); ttsBuffer=''; }
+      sfx.recv();
+    }else{
+      body.innerHTML = '<span class="sys-err">(Sytion không trả về nội dung — thử lại.)</span>';
+    }
+  }
+  if(!full) history.pop();
+  if(activeUtter===0 && mode!=='listen') setMode('idle');
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+ $('#inputForm').addEventListener('submit', e=>{ e.preventDefault(); handleSend(); });
+ $('#suggestBlock').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-q]');
+  if(b) handleSend(b.dataset.q);
+});
+ $('#stopBtn').addEventListener('click', ()=>{
+  const wasBusy = currentAbort || activeUtter>0 || mode==='think' || mode==='speak';
+  if(currentAbort) currentAbort.abort();
+  stopAllSpeech();
+  ttsBuffer = '';
+  if(mode!=='listen') setMode('idle');
+  if(wasBusy){ sfx.listenOff(); toast('Đã dừng mọi tiến trình.'); }
+});
+
+/* ---------- nhận diện giọng nói ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false, micStream = null, micAnalyser = null, micArr = null;
+
+async function startMicAudio(){
   try{
-    if(Date.now()<ttsCool) throw new Error('cool');
-    const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:clean})});
-    const d=await r.json(); if(!r.ok||!d.audio) throw new Error(d.error||'tts');
-    if(tok!==speakTok) return;
-    await playPCM(d.audio,d.rate||24000,tok);
+    micStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const src = AC.createMediaStreamSource(micStream);
+    micAnalyser = AC.createAnalyser(); micAnalyser.fftSize = 512;
+    micArr = new Uint8Array(micAnalyser.fftSize);
+    src.connect(micAnalyser);
+    return true;
   }catch(e){
-    if(e.message!=='cool') ttsCool=Date.now()+45000; // Gemini TTS hết hạn mức → dùng giọng trình duyệt trong 45s
-    if(tok===speakTok) await browserSpeak(clean,tok);
+    toast('Không truy cập được micro — hãy cấp quyền cho trang.', 'err');
+    return false;
   }
-  if(tok===speakTok){speaking=false; set('idle')}
 }
-function playPCM(b64,rate,tok){
-  return new Promise(res=>{
-    const bin=atob(b64), n=bin.length>>1, buf=ac.createBuffer(1,n,rate), ch=buf.getChannelData(0);
-    for(let i=0;i<n;i++){let v=bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8); if(v>=32768)v-=65536; ch[i]=v/32768}
-    const s=ac.createBufferSource(); s.buffer=buf; s.connect(an); curSrc=s; s.onended=()=>{curSrc=null;res()};
-    if(ac.state==='suspended') ac.resume(); set('speak'); s.start();
-  });
+function stopMicAudio(){
+  if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; micAnalyser=null; }
 }
-function browserSpeak(text,tok){
-  return new Promise(res=>{
-    if(!('speechSynthesis' in window)) return res();
-    const u=new SpeechSynthesisUtterance(text); u.lang='vi-VN'; u.rate=.92; u.pitch=.7;
-    const v=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith('vi')); if(v) u.voice=v;
-    u.onstart=()=>set('speak'); u.onend=u.onerror=()=>res(); speechSynthesis.speak(u);
-  });
+ $('#micBtn').addEventListener('click', async ()=>{
+  if(!AC) initAudio();
+  if(!SR){
+    toast('Trình duyệt không hỗ trợ nhận giọng nói — hãy dùng Chrome hoặc Edge.', 'err');
+    return;
+  }
+  if(listening){ try{rec.stop()}catch(e){} return; }
+  if(!(await startMicAudio())) return;
+
+  rec = new SR();
+  rec.lang = 'vi-VN'; rec.interimResults = true; rec.continuous = false;
+  let finalText = '';
+  rec.onresult = e=>{
+    let interim = '';
+    for(let i=e.resultIndex; i<e.results.length; i++){
+      if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    inputEl.value = finalText || interim;
+  };
+  rec.onerror = e=>{
+    if(e.error==='no-speech') toast('Sytion không nghe thấy gì — thử lại nhé.');
+    else if(e.error==='not-allowed') toast('Quyền micro bị từ chối.', 'err');
+  };
+  rec.onend = ()=>{
+    listening = false;
+    $('#micBtn').classList.remove('on');
+    stopMicAudio();
+    if(mode==='listen') setMode('idle');
+    const t = (finalText || inputEl.value).trim();
+    if(t) handleSend(t);
+  };
+  listening = true; finalText = '';
+  $('#micBtn').classList.add('on');
+  setMode('listen');
+  sfx.listenOn();
+});
+
+/* ---------- canvas nền ---------- */
+const bgC = $('#bgCanvas'), bgX = bgC.getContext('2d');
+let DPR = 1, W = 0, H = 0, parts = [], mx = -999, my = -999;
+function resizeBg(){
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = innerWidth; H = innerHeight;
+  bgC.width = W*DPR; bgC.height = H*DPR;
+  bgC.style.width = W+'px'; bgC.style.height = H+'px';
+  bgX.setTransform(DPR,0,0,DPR,0,0);
+  const n = Math.min(110, Math.floor(W*H/16000));
+  parts = Array.from({length:n}, ()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-.5)*.24, vy:(Math.random()-.5)*.24,
+    a:.15+Math.random()*.2
+  }));
+}
+addEventListener('resize', resizeBg);
+addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+addEventListener('mouseleave', ()=>{ mx=my=-999; });
+resizeBg();
+
+function drawBg(){
+  bgX.clearRect(0,0,W,H);
+  for(const p of parts){
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+    if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
+  }
+  bgX.lineWidth = 1;
+  for(let i=0;i<parts.length;i++){
+    const a = parts[i];
+    for(let j=i+1;j<parts.length;j++){
+      const b = parts[j];
+      const d=Math.hypot(a.x-b.x, a.y-b.y);
+      if(d<130){
+        bgX.strokeStyle = `rgba(80,210,240,${(1-d/130)*.1})`;
+        bgX.beginPath(); bgX.moveTo(a.x,a.y); bgX.lineTo(b.x,b.y); bgX.stroke();
+      }
+    }
+    const dm = Math.hypot(a.x-mx, a.y-my);
+    if(dm<160){
+      bgX.strokeStyle = `rgba(70,224,255,${(1-dm/160)*.3})`;
+      bgX.beginPath(); bgX.moveTo(a.x,a.y); bgX.lineTo(mx,my); bgX.stroke();
+    }
+  }
+  for(const p of parts){
+    bgX.fillStyle = `rgba(90,215,245,${p.a})`;
+    bgX.beginPath(); bgX.arc(p.x,p.y,1.2,0,7); bgX.fill();
+  }
 }
 
-/* ================= GIỌNG NÓI VÀO ================= */
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-function stopRec(){if(rec){rec.onend=null; try{rec.abort()}catch{} rec=null} listening=false; $('mic').classList.remove('on')}
-function listen(loud){
+/* ---------- lõi phản ứng ---------- */
+const rC = $('#reactorCanvas'), rX = rC.getContext('2d');
+const rWrap = document.querySelector('.reactor-wrap');
+let rw = 300, rh = 300;
+function resizeReactor(){
+  const r = rWrap.getBoundingClientRect();
+  rw = Math.max(220, r.width - 12); rh = Math.max(220, r.height - 12);
+  rC.width = rw*DPR; rC.height = rh*DPR;
+  rC.style.width = rw+'px'; rC.style.height = rh+'px';
+  rX.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener('resize', resizeReactor);
+
+const NBARS = 84;
+const bars = new Array(NBARS).fill(0);
+const CYAN='#46e0ff', AMBER='#ffb54d';
+function hexA(hex, a){
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function updateBars(t){
+  if(mode==='listen' && micAnalyser){
+    micAnalyser.getByteTimeDomainData(micArr);
+    for(let i=0;i<NBARS;i++){
+      const v = Math.abs(micArr[(i*4)%micArr.length]-128)/128;
+      bars[i] = lerp(bars[i], Math.min(1, v*2.4), .5);
+    }
+  }else if(mode==='speak'){
+    for(let i=0;i<NBARS;i++){
+      const target = (Math.sin(t*11 + i*.9)*.5+.5) * (.2 + Math.random()*.85);
+      bars[i] = lerp(bars[i], target, .22);
+    }
+  }else{
+    for(let i=0;i<NBARS;i++){
+      bars[i] = lerp(bars[i], .04 + Math.max(0, Math.sin(t*1.4 + i*.35))*.05, .06);
+    }
+  }
+}
+function drawReactor(now){
+  const t = now/1000;
+  rX.clearRect(0,0,rw,rh);
+  const cx=rw/2, cy=rh/2, R=Math.min(rw,rh)/2 - 5;
+  const col = mode==='listen' ? AMBER : CYAN;
+  const spin = mode==='think' ? 3.2 : 1;
+
+  rX.save(); rX.translate(cx,cy); rX.rotate(t*.05*spin);
+  for(let i=0;i<72;i++){
+    const a=i/72*Math.PI*2, long=i%6===0;
+    const r1=R*(long?.9:.955), r2=R;
+    rX.strokeStyle = long ? hexA(col,.55) : hexA(col,.2);
+    rX.lineWidth = long?2:1;
+    rX.beginPath();
+    rX.moveTo(Math.cos(a)*r1, Math.sin(a)*r1);
+    rX.lineTo(Math.cos(a)*r2, Math.sin(a)*r2);
+    rX.stroke();
+  }
+  rX.restore();
+
+  const arcs = [
+    {r:.8,span:1.25,sp:.35,off:0},{r:.8,span:.55,sp:.35,off:2.5},
+    {r:.8,span:.95,sp:.35,off:4.4},{r:.69,span:2.4,sp:-.22,off:1},
+  ];
+  rX.lineWidth = 2;
+  for(const a of arcs){
+    rX.strokeStyle = hexA(col, .35);
+    rX.beginPath();
+    rX.arc(cx, cy, R*a.r, t*a.sp*spin + a.off, t*a.sp*spin + a.off + a.span);
+    rX.stroke();
+  }
+
+  rX.save();
+  rX.translate(cx,cy); rX.rotate(-t*.3*spin);
+  rX.setLineDash([2,7]); rX.lineWidth = 1.5;
+  rX.strokeStyle = hexA(col,.4);
+  rX.beginPath(); rX.arc(0,0,R*.42,0,Math.PI*2); rX.stroke();
+  rX.restore();
+  rX.setLineDash([]);
+
+  updateBars(t);
+  rX.lineWidth = 2;
+  for(let i=0;i<NBARS;i++){
+    const a = i/NBARS*Math.PI*2 + t*.02;
+    const base = R*.55, len = 3 + bars[i]*R*.15;
+    rX.strokeStyle = hexA(col, .28 + bars[i]*.65);
+    rX.beginPath();
+    rX.moveTo(cx+Math.cos(a)*base,      cy+Math.sin(a)*base);
+    rX.lineTo(cx+Math.cos(a)*(base+len),cy+Math.sin(a)*(base+len));
+    rX.stroke();
+  }
+
+  if(mode==='think'){
+    for(let k=0;k<3;k++){
+      rX.strokeStyle = hexA(col, .85 - k*.3);
+      rX.lineWidth = 3 - k;
+      const st = t*3.4 - k*.28;
+      rX.beginPath(); rX.arc(cx, cy, R*.47, st, st+1.4); rX.stroke();
+    }
+  }
+
+  const pulse = 1 + Math.sin(t*(mode==='think'?6:2))*.08;
+  const gr = rX.createRadialGradient(cx,cy,0, cx,cy,R*.22*pulse);
+  gr.addColorStop(0, hexA(col,.5));
+  gr.addColorStop(.45, hexA(col,.12));
+  gr.addColorStop(1, hexA(col,0));
+  rX.fillStyle = gr;
+  rX.beginPath(); rX.arc(cx,cy,R*.22*pulse,0,7); rX.fill();
+  rX.shadowColor = col; rX.shadowBlur = 18;
+  rX.fillStyle = '#eaffff';
+  rX.beginPath(); rX.arc(cx,cy,R*.055*pulse,0,7); rX.fill();
+  rX.shadowBlur = 0;
+}
+function loop(now){ drawBg(); drawReactor(now); requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+
+/* ---------- đồng hồ ---------- */
+let bootTime = null;
+setInterval(()=>{
+  $('#clockTime').textContent = new Date().toTimeString().slice(0,8);
+  if(bootTime){
+    const s = Math.floor((Date.now()-bootTime)/1000);
+    const p = n=>String(n).padStart(2,'0');
+    $('#uptime').textContent = `${p(Math.floor(s/3600))}:${p(Math.floor(s/60)%60)}:${p(s%60)}`;
+  }
+},1000);
+
+/* ---------- modal cài đặt ---------- */
+const modal = $('#settingsModal');
+function openSettings(){
+  $('#keyInput').value = settings.key;
+  $('#modelSelect').value = settings.model;
+  $('#engineSelect').value = settings.engine;
+  $('#rateRange').value = settings.rate;  $('#rateVal').textContent = settings.rate.toFixed(2);
+  $('#pitchRange').value = settings.pitch;$('#pitchVal').textContent = settings.pitch.toFixed(2);
+  $('#sfxToggle').checked = settings.sfx;
+  $('#humToggle').checked = settings.hum;
+  updateEngineHint();
+  modal.classList.remove('hidden');
+}
+function closeSettings(){ modal.classList.add('hidden'); }
+ $('#settingsBtn').addEventListener('click', ()=>{ sfx.tick(); openSettings(); });
+ $('#closeSettings').addEventListener('click', closeSettings);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeSettings(); });
+addEventListener('keydown', e=>{ if(e.key==='Escape') closeSettings(); });
+
+ $('#toggleKey').addEventListener('click', ()=>{
+  const inp = $('#keyInput');
+  inp.type = inp.type==='password' ? 'text' : 'password';
+});
+ $('#rateRange').addEventListener('input', e=> $('#rateVal').textContent = (+e.target.value).toFixed(2));
+ $('#pitchRange').addEventListener('input', e=> $('#pitchVal').textContent = (+e.target.value).toFixed(2));
+ $('#engineSelect').addEventListener('change', e=>{
+  settings.engine = e.target.value;
+  localStorage.setItem('syt_engine', settings.engine);
+});
+ $('#voiceSelect').addEventListener('change', e=>{
+  const v = speechSynthesis.getVoices().find(v=>v.voiceURI===e.target.value);
+  if(v){ voice = v; settings.voiceURI = v.voiceURI; localStorage.setItem('syt_voice', v.voiceURI); }
+});
+ $('#testVoice').addEventListener('click', ()=>{
+  stopAllSpeech();
+  speak('Xin chào ngài, Sytion đây. Đây là giọng đọc tiếng Việt hiện tại của tôi.');
+});
+ $('#clearKey').addEventListener('click', ()=>{
+  settings.key=''; localStorage.removeItem('syt_key');
+  refreshKeyDot(); closeSettings();
+  toast('Đã xóa API key khỏi máy.'); sfx.listenOff();
+});
+ $('#saveSettings').addEventListener('click', ()=>{
+  const k = $('#keyInput').value.trim();
+  if(k && !/^AIza[A-Za-z0-9_\-]{20,}$/.test(k))
+    toast('Key có vẻ không đúng định dạng (thường bắt đầu bằng "AIza...") — vẫn sẽ lưu để thử.', 'err');
+  settings.key = k;
+  settings.model = $('#modelSelect').value;
+  settings.engine = $('#engineSelect').value;
+  settings.rate = +$('#rateRange').value;
+  settings.pitch = +$('#pitchRange').value;
+  settings.sfx = $('#sfxToggle').checked;
+  settings.hum = $('#humToggle').checked;
+  localStorage.setItem('syt_key', settings.key);
+  localStorage.setItem('syt_model', settings.model);
+  localStorage.setItem('syt_engine', settings.engine);
+  localStorage.setItem('syt_rate', settings.rate);
+  localStorage.setItem('syt_pitch', settings.pitch);
+  localStorage.setItem('syt_sfx', settings.sfx?'1':'0');
+  localStorage.setItem('syt_hum', settings.hum?'1':'0');
+  refreshKeyDot();
+  if(humNodes && !settings.hum) stopHum();
+  if(!humNodes && settings.hum && AC) startHum();
+  closeSettings();
+  sfx.recv();
+  toast('Đã lưu cấu hình.');
+});
+ $('#soundBtn').addEventListener('click', function(){
+  settings.sfx = !settings.sfx;
+  if(settings.hum && !settings.sfx) stopHum();
+  if(settings.hum && settings.sfx && AC) startHum();
+  localStorage.setItem('syt_sfx', settings.sfx?'1':'0');
+  this.classList.toggle('muted', !settings.sfx);
+  if(settings.sfx) sfx.tick();
+  toast(settings.sfx ? 'Âm thanh: BẬT' : 'Âm thanh: TẮT');
+});
+function refreshKeyDot(){
+  const ok = !!settings.key;
+  $('#keyDot').classList.toggle('ok', ok);
+  $('#keyDotText').textContent = ok ? 'KEY: SẴN SÀNG' : 'CHƯA CẤP KEY';
+  $('#modelLabel').textContent = ok ? settings.model : '—';
+}
+refreshKeyDot();
+if(!settings.sfx) $('#soundBtn').classList.add('muted');
+
+/* ---------- khởi động ---------- */
+const bootLinesEl = $('#bootLines');
+const bootSteps = [
+  {t:'KHỞI ĐỘNG LÕI ĐIỀU KHIỂN .................. <b class="ok">OK</b>', d:340},
+  {t:'NẠP MÔ-ĐUN NGÔN NGỮ TIẾNG VIỆT ............ <b class="ok">OK</b>', d:320},
+  {t:'KIỂM TRA GIAO DIỆN ÂM THANH ................ <b class="ok">OK</b>', d:300},
+  {t:'ĐỒNG BỘ BỘ MÁY ĐỌC TIẾNG VIỆT .............. ' + ((('speechSynthesis' in window) ? '<b class="ok">OK</b>' : '<b class="warn">ONLINE</b>')), d:360},
+  {t:'THIẾT LẬP KẾT NỐI GEMINI .................. ' + (settings.key ? '<b class="ok">OK</b>' : '<b class="warn">CHỜ KEY</b>'), d:420},
+  {t:'SYTION SẴN SÀNG.', d:400},
+];
+let bi = 0;
+function runBoot(){
+  if(bi >= bootSteps.length){
+    $('#bootBtn').style.display = 'inline-block';
+    $('#bootNote').style.display = 'block';
+    return;
+  }
+  const s = bootSteps[bi++];
+  const div = document.createElement('div');
+  div.innerHTML = '&gt; ' + s.t;
+  bootLinesEl.appendChild(div);
+  sfx.tick();
+  setTimeout(runBoot, s.d);
+}
+setTimeout(runBoot, 500);
+
+ $('#bootBtn').addEventListener('click', ()=>{
   initAudio();
-  if(!SR){add('Trình duyệt này không hỗ trợ nhận giọng nói. Hãy dùng Chrome hoặc Edge.','a err'); return}
-  if(busy||speaking||listening) return;
-  const r=new SR(); rec=r; r.lang='vi-VN'; r.interimResults=true; let final='';
-  r.onstart=()=>{listening=true; set('listen'); $('mic').classList.add('on'); if(loud!==false) sfx.on()};
-  r.onresult=e=>{let s=''; for(const x of e.results) s+=x[0].transcript; q.value=s; if(e.results[e.results.length-1].isFinal) final=s};
-  r.onerror=e=>{ if(e.error==='not-allowed'||e.error==='service-not-allowed'){ jarvis=false; $('tgJarvis').setAttribute('aria-pressed',false); add('Chưa có quyền dùng micro. Bấm biểu tượng ổ khóa cạnh thanh địa chỉ → cho phép Micro.','a err') } };
-  r.onend=()=>{ if(rec!==r) return; listening=false; rec=null; $('mic').classList.remove('on'); sfx.off();
-    if(final) send(final); else { set('idle'); if(jarvis) setTimeout(()=>listen(false),500) } };
-  try{r.start()}catch{}
-}
-$('mic').onclick=()=>{initAudio(); if(listening){stopRec(); set('idle'); return} stopSpeak(); listen(true)};
-
-/* ================= CÔNG TẮC ================= */
-$('tgVoice').onclick=e=>{voiceOn=!voiceOn; e.target.setAttribute('aria-pressed',voiceOn); if(!voiceOn) stopSpeak(); sfx.click()};
-$('tgSound').onclick=e=>{soundOn=!soundOn; e.target.setAttribute('aria-pressed',soundOn); if(master) master.gain.value=soundOn?.55:0; if(soundOn) sfx.click()};
-$('tgJarvis').onclick=e=>{jarvis=!jarvis; e.target.setAttribute('aria-pressed',jarvis); initAudio();
-  if(jarvis){voiceOn=true; $('tgVoice').setAttribute('aria-pressed',true); sfx.on(); listen(false)} else {stopRec(); set('idle')}};
-
-/* ================= KHỞI ĐỘNG ================= */
-const BOOT=['> SYTION CORE v2.0','> nạp mô-đun ngôn ngữ tiếng Việt ........ OK','> kết nối lõi Gemini ................... OK','> tải hồ sơ giáo xứ Hòa An ............. OK','> hiệu chỉnh mức độ chán nản ........... 87%','> tất cả hệ thống sẵn sàng. haizz...'];
-$('go').onclick=async()=>{
-  const b=$('go'); b.disabled=true; b.textContent='ĐANG KHỞI ĐỘNG...'; initAudio(); if(ac.state==='suspended') await ac.resume(); sfx.boot();
-  const pre=$('bootlog');
-  for(const line of BOOT){ for(const ch of line){pre.textContent+=ch; await new Promise(r=>setTimeout(r,calm?0:12))} pre.textContent+='\n'; sfx.key(); await new Promise(r=>setTimeout(r,calm?0:150)) }
-  await new Promise(r=>setTimeout(r,500));
-  $('boot').classList.add('off'); $('brand').classList.add('glitch');
-  const hi='*thở dài* Sytion đã thức dậy. Lại một ngày nữa. Hỏi đi, tôi biết hết về Cha xứ Hòa An mà.';
-  const el=add('','a'); set('idle','ĐANG TRẢ LỜI'); await Promise.all([typeInto(el,hi),speak(hi)]); set('idle');
-};
-if('speechSynthesis' in window) speechSynthesis.getVoices();
+  AC.resume();
+  sfx.boot();
+  if(settings.hum) startHum();
+  bootTime = Date.now();
+  const boot = $('#boot');
+  boot.classList.add('off');
+  setTimeout(()=>boot.remove(), 800);
+  setTimeout(()=>{
+    const greet = 'Sytion đã trực tuyến. Lõi xử lý và bộ máy đọc tiếng Việt sẵn sàng. ' +
+      (settings.key ? 'Tôi có thể giúp gì cho ngài hôm nay?' : 'Lưu ý: chưa cấp API key — hãy mở Cài đặt để kích hoạt trí tuệ trung tâm.');
+    addMsg('ai', fmt(esc(greet)));
+    speak(greet);
+    inputEl.focus();
+  }, 500);
+});
+resizeReactor();
+setTimeout(resizeReactor, 300);
 </script>
 </body>
 </html>
